@@ -1,238 +1,173 @@
-<!DOCTYPE html>
-<html dir="rtl" lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الاستعلام عن الرواتب | مديرية غاز الجنوب</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #e2e8f0; scroll-behavior: smooth; }
-        .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border: 1px solid rgba(0, 0, 0, 0.05); }
-        .btn-primary { background: linear-gradient(135deg, #2563eb, #1e3a8a); transition: all 0.3s ease; }
-        .loader { border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @media print { .no-print { display: none !important; } }
-       
-        /* تنسيق الأيقونة السحابية لتكون كبيرة وبدون نص */
-        .btn-cloud-icon-only {
-            display: flex; align-items: center; justify-content: center;
-            width: 60px; height: 60px; border-radius: 18px;
-            background: white; color: #2563eb; border: 2px solid #cbd5e1;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin: 20px auto 0; 
-            cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        }
-        .btn-cloud-icon-only:hover { 
-            background: #f8fafc; border-color: #2563eb; 
-            transform: scale(1.15) rotate(5deg);
-            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
-        }
-    </style>
-</head>
-<body class="antialiased text-slate-900">
+import 'package:flutter/material.dart';
 
-<div id="passwordModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-    <div class="glass-card w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border border-white/20 animate-in zoom-in-95 duration-300">
-        <div class="text-center mb-6">
-            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="lock" class="w-8 h-8"></i></div>
-            <h3 class="text-xl font-black text-slate-800">الدخول للإدارة</h3>
-            <p class="text-sm text-slate-500 mt-1">يرجى إدخال كلمة مرور المدير</p>
-        </div>
-        <input type="password" id="adminPassInput" onkeypress="if(event.key==='Enter') submitPassword()" class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 text-center font-bold text-xl outline-none mb-6" placeholder="••••••••">
-        <div class="flex gap-3">
-            <button onclick="submitPassword()" class="btn-primary flex-1 py-4 text-white rounded-xl font-bold">دخول</button>
-            <button onclick="closePasswordModal()" class="flex-1 py-4 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-colors">إلغاء</button>
-        </div>
-    </div>
-</div>
+void main() => runApp(const ProNotesApp());
 
-<div class="min-h-screen py-10 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-3xl mx-auto">
-        <header class="text-center mb-10 no-print">
-            <h1 class="text-xl md:text-2xl font-black text-slate-800 mb-2">مديرية غاز جنوب المنطقة الوسطى</h1>
-            <p class="text-slate-600 font-medium text-base">الاستعلام الالكتروني عن الرواتب</p>
-        </header>
+class ProNotesApp extends StatelessWidget {
+  const ProNotesApp({super.key});
 
-        <div id="querySection" class="glass-card rounded-[2.5rem] p-8 mb-4 shadow-2xl shadow-slate-300/50 no-print border border-slate-200">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                <div class="space-y-3">
-                    <label class="text-sm font-bold text-slate-700 flex items-center gap-2 px-1"><i data-lucide="user" class="w-4 h-4 text-blue-500"></i> الرقم الوطني</label>
-                    <input type="text" id="nationalId" placeholder="أدخل الرقم الوطني" inputmode="numeric" class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-blue-500 focus:bg-white transition-all text-center font-black text-xl outline-none">
-                </div>
-                <div class="space-y-3">
-                    <label class="text-sm font-bold text-slate-700 flex items-center gap-2 px-1"><i data-lucide="calendar" class="w-4 h-4 text-blue-500"></i> شهر الاستحقاق</label>
-                    <select id="monthSelect" class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-blue-500 font-bold outline-none cursor-pointer">
-                        <? for (var i = 0; i < sheetList.length; i++) { ?>
-                            <option value="<?= sheetList[i] ?>"><?= sheetList[i] ?></option>
-                        <? } ?>
-                    </select>
-                </div>
-            </div>
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      ),
+      home: const ProNotesScreen(),
+    );
+  }
+}
 
-            <div class="flex flex-col items-center">
-                <button onclick="fetchData()" id="searchBtn" class="btn-primary w-full py-5 text-white rounded-2xl font-black text-xl flex items-center justify-center gap-3">
-                    <div id="btnContent" class="flex items-center gap-3"><i data-lucide="search" class="w-6 h-6"></i><span>استعلام</span></div>
-                    <div id="btnLoader" class="hidden flex items-center gap-3"><div class="loader"></div><span>جاري الاستعلام</span></div>
-                </button>
-            </div>
-           
-            <div id="errorMsg" class="hidden mt-6 p-5 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-4 text-red-700 font-bold text-sm">
-                <i data-lucide="alert-circle" class="w-6 h-6 text-red-500"></i><span id="errorText"></span>
-            </div>
-        </div>
+// نموذج البيانات
+class Note {
+  final String id;
+  final String title;
+  final String content;
+  final DateTime date;
+  final Color color;
 
-       <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 20px;">
+  Note({
+    required this.id,
+    required this.title,
+    required this.content,
+    required this.date,
+    required this.color,
+  });
+}
 
-    <a href="<?= scriptUrl ?>?page=app" target="_top" title="تحميل التطبيق" class="btn-cloud-icon-only no-print">
-        <i data-lucide="cloud-download" class="w-8 h-8"></i>
-    </a>
+class ProNotesScreen extends StatefulWidget {
+  const ProNotesScreen({super.key});
 
-    <span style="margin-top: 8px; font-family: sans-serif; font-size: 14px;">
-        تحميل التطبيق
-    </span>
+  @override
+  State<ProNotesScreen> createState() => _ProNotesScreenState();
+}
 
-</div>
+class _ProNotesScreenState extends State<ProNotesScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final List<Note> _notes = [];
 
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    // إضافة ملاحظات تجريبية
+    _notes.add(Note(
+      id: '1',
+      title: 'خطة المشروع',
+      content: 'إنهاء تصميم الواجهات قبل نهاية الأسبوع.',
+      date: DateTime.now(),
+      color: Colors.amber.shade100,
+    ));
+  }
 
-        <div id="adminPanel" class="hidden glass-card rounded-[2.5rem] p-8 mb-10 shadow-2xl border-2 border-blue-100">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-black text-blue-800 flex items-center gap-2"><i data-lucide="settings"></i> لوحة الإدارة</h2>
-                <button onclick="toggleAdmin()" class="text-slate-400 hover:text-red-500"><i data-lucide="x"></i></button>
-            </div>
-            <div class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="newSheetName" placeholder="اسم الشيت (مثلاً: 06-2026)" class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl outline-none">
-                    <input type="file" id="excelFile" accept=".xlsx, .xls" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-50 file:text-blue-700">
-                </div>
-                <button onclick="handleUpload()" id="uploadBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2">
-                    <i data-lucide="upload-cloud"></i> رفع البيانات ومعالجتها
-                </button>
-            </div>
-        </div>
+  void _addNote() {
+    setState(() {
+      _notes.add(Note(
+        id: DateTime.now().toString(),
+        title: 'ملاحظة جديدة',
+        content: 'محتوى ملاحظة ذكية...',
+        date: DateTime.now(),
+        color: Colors.blue.shade100,
+      ));
+    });
+  }
 
-        <div id="results" class="hidden space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div class="glass-card rounded-[2.5rem] overflow-hidden shadow-2xl">
-                <div class="bg-blue-700 p-8 text-white flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div class="text-center md:text-right">
-                        <div class="flex items-center gap-2 mb-2 opacity-80 justify-center md:justify-start text-xs font-black uppercase tracking-widest"><i data-lucide="shield-check" class="w-4 h-4"></i> كشف الراتب</div>
-                        <h2 id="resName" class="text-3xl font-black"></h2>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 text-center min-w-[210px]">
-                        <p class="text-xs font-black uppercase tracking-widest mb-1 opacity-80">صافي المستحق</p>
-                        <div class="text-4xl font-black"><span id="resNet"></span> <span class="text-lg font-bold opacity-60">ل.س</span></div>
-                    </div>
-                </div>
-                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 bg-white">
-                    <div class="space-y-1"><p class="text-[10px] font-black text-slate-400">تاريخ الصرف</p><p id="resDate" class="text-lg font-bold text-slate-800"></p></div>
-                    <div class="space-y-1"><p class="text-[10px] font-black text-slate-400">حالة الصرف</p><span class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-black">جاهز للصرف</span></div>
-                </div>
-            </div>
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverAppBar(
+            expandedHeight: 150.0,
+            floating: true,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: const Text('ملاحظاتي المتقدمة', style: TextStyle(fontWeight: FontWeight.bold)),
+              background: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.deepPurple, Colors.deepPurple.shade200],
+                  ),
+                ),
+              ),
+            ),
+            bottom: TabBar(
+              controller: _tabController,
+              indicatorColor: Colors.white,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+              tabs: const [
+                Tab(text: 'الكل', icon: Icon(Icons.all_inclusive)),
+                Tab(text: 'العمل', icon: Icon(Icons.business_center)),
+                Tab(text: 'الأرشيف', icon: Icon(Icons.archive)),
+              ],
+            ),
+          ),
+        ],
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildNoteList(),
+            const Center(child: Text('لا توجد مهام عمل حالياً')),
+            const Center(child: Text('الأرشيف فارغ')),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _addNote,
+        label: const Text('ملاحظة'),
+        icon: const Icon(Icons.edit_note),
+      ),
+    );
+  }
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1">
-                    <div class="glass-card rounded-3xl p-6 bg-white shadow-sm border border-slate-200">
-                        <h3 class="text-[18px] font-black text-slate-400 mb-6 flex items-center gap-2"><i data-lucide="info" class="w-4 h-4 text-blue-500"></i> التفاصيل</h3>
-                        <div id="infoList" class="space-y-5"></div>
-                    </div>
-                </div>
-                <div class="lg:col-span-2 space-y-8">
-                    <div id="allowanceSection" class="space-y-4">
-                        <h3 class="text-lg font-black text-emerald-700 flex items-center gap-2 px-2"><i data-lucide="trending-up"></i>التعويضات والفروقات</h3>
-                        <div class="bg-white rounded-[2rem] border border-slate-300 overflow-hidden shadow-sm">
-                            <table class="w-full text-right"><tbody id="allowanceTable" class="divide-y divide-slate-300"></tbody></table>
-                        </div>
-                    </div>
-                    <div id="deductionSection" class="space-y-4">
-                        <h3 class="text-lg font-black text-rose-700 flex items-center gap-2 px-2"><i data-lucide="trending-down"></i>الحسميات والاستردادات</h3>
-                        <div class="bg-white rounded-[2rem] border border-slate-300 overflow-hidden shadow-sm">
-                            <table class="w-full text-right"><tbody id="deductionTable" class="divide-y divide-slate-300"></tbody></table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <footer class="mt-20 text-center no-print border-t border-slate-300 pt-10">
-            <button onclick="askPassword()" class="text-[10px] text-slate-400 hover:text-blue-500 transition-colors mb-4 block mx-auto tracking-widest uppercase">دخول الإدارة</button>
-            <p class="text-xs text-slate-500 mt-2 font-medium">تصميم وتطوير: <span class="text-slate-700 font-black">William Alhasan</span> © 2026</p>
-        </footer>
-    </div>
-</div>
-
-<script>
-    lucide.createIcons();
-    let adminPass = "";
-
-    function askPassword() { document.getElementById('passwordModal').classList.remove('hidden'); document.getElementById('adminPassInput').focus(); }
-    function closePasswordModal() { document.getElementById('passwordModal').classList.add('hidden'); document.getElementById('adminPassInput').value = ''; }
-   
-    function submitPassword() {
-        const p = document.getElementById('adminPassInput').value;
-        if (!p) return;
-        google.script.run.withSuccessHandler(function(isValid) {
-            if (isValid) { adminPass = p; closePasswordModal(); document.getElementById('adminPanel').classList.remove('hidden'); document.getElementById('querySection').classList.add('hidden'); }
-            else { alert("كلمة مرور خاطئة!"); }
-        }).checkAdminAuth(p);
-    }
-
-    function toggleAdmin() { document.getElementById('adminPanel').classList.add('hidden'); document.getElementById('querySection').classList.remove('hidden'); }
-
-    async function handleUpload() {
-        const fileInput = document.getElementById('excelFile');
-        const sheetName = document.getElementById('newSheetName').value.trim();
-        const btn = document.getElementById('uploadBtn');
-        if (!fileInput.files[0] || !sheetName) { alert("يرجى اختيار ملف وكتابة اسم الشيت"); return; }
-        btn.disabled = true; btn.innerHTML = "جاري المعالجة...";
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, {type: 'array'});
-            const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1, defval: "" });
-            google.script.run.withSuccessHandler(function(res) {
-                btn.disabled = false; btn.innerHTML = `<i data-lucide="upload-cloud"></i> رفع البيانات ومعالجتها`;
-                if (res.success) { alert("تم الرفع بنجاح!"); location.reload(); } else { alert("خطأ: " + res.error); }
-            }).processUpload(jsonData, sheetName, adminPass);
-        };
-        reader.readAsArrayBuffer(fileInput.files[0]);
-    }
-
-    function fetchData() {
-        const id = document.getElementById('nationalId').value.trim();
-        const month = document.getElementById('monthSelect').value;
-        const btn = document.getElementById('searchBtn');
-        const btnContent = document.getElementById('btnContent');
-        const btnLoader = document.getElementById('btnLoader');
-        const res = document.getElementById('results');
-
-        if (!id) { showError("يرجى إدخال الرقم الوطني"); return; }
-        document.getElementById('errorMsg').classList.add('hidden');
-        btn.disabled = true; btnContent.classList.add('hidden'); btnLoader.classList.remove('hidden');
-
-        google.script.run.withSuccessHandler(function(data) {
-            btn.disabled = false; btnContent.classList.remove('hidden'); btnLoader.classList.add('hidden');
-            if (data.error) { showError(data.error === "error_id" ? "الرقم الوطني غير موجود" : "خطأ نظام"); res.classList.add('hidden'); return; }
-            document.getElementById('resName').innerText = data.info[0].v;
-            document.getElementById('resNet').innerText = data.netValue;
-            document.getElementById('resDate').innerText = data.salaryDate;
-            document.getElementById('infoList').innerHTML = data.info.map(i => `<div class="flex justify-between border-b border-slate-200 pb-2"><span class="text-slate-500 text-xs">${i.h}</span><span class="font-black text-slate-900">${i.v}</span></div>`).join('');
-            fillTable('allowanceTable', data.allowances, 'text-emerald-700', 'allowanceSection');
-            fillTable('deductionTable', data.deductions, 'text-rose-700', 'deductionSection');
-            res.classList.remove('hidden'); res.scrollIntoView({ behavior: 'smooth' });
-            lucide.createIcons();
-        }).getResult(id, month);
-    }
-
-    function fillTable(tId, items, color, sId) {
-        const table = document.getElementById(tId); const section = document.getElementById(sId);
-        if (items.length === 0) { section.classList.add('hidden'); return; }
-        section.classList.remove('hidden');
-        table.innerHTML = items.map(item => `<tr><td class="px-6 py-4 text-sm font-bold text-slate-700">${item.name}</td><td class="px-6 py-4 text-sm font-black ${color} text-left">${item.val}</td></tr>`).join('');
-    }
-
-    function showError(msg) { document.getElementById('errorText').innerText = msg; document.getElementById('errorMsg').classList.remove('hidden'); lucide.createIcons(); }
-</script>
-</body>
-</html>
+  Widget _buildNoteList() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: _notes.length,
+      itemBuilder: (context, index) {
+        final note = _notes[index];
+        return Dismissible(
+          key: Key(note.id),
+          direction: DismissDirection.startToEnd,
+          onDismissed: (direction) {
+            setState(() => _notes.removeAt(index));
+          },
+          background: Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            color: Colors.red,
+            child: const Icon(Icons.delete, color: Colors.white),
+          ),
+          child: Hero(
+            tag: note.id,
+            child: Card(
+              color: note.color,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(15),
+                title: Text(note.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    Text(note.content),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${note.date.hour}:${note.date.minute}',
+                      style: const TextStyle(fontSize: 10, color: Colors.black54),
+                    ),
+                  ],
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.push_pin_outlined),
+                  onPressed: () {},
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
