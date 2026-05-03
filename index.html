@@ -3,66 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ملخص أخبار قطاع النفط في سوريا</title>
+    <title>أداة اليوم للمصممين</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        .news-item { border-bottom: 1px solid #eee; padding: 15px 0; }
-        .news-item:last-child { border-bottom: none; }
-        .news-title { font-size: 1.2em; color: #e67e22; text-decoration: none; font-weight: bold; }
-        .news-date { font-size: 0.8em; color: #7f8c8d; display: block; margin-top: 5px; }
-        .news-description { color: #34495e; margin-top: 10px; line-height: 1.6; }
-        .loader { text-align: center; color: #7f8c8d; }
+        :root {
+            --primary-color: #2563eb;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--primary-color); }
+        p { color: #64748b; margin-bottom: 1.5rem; }
+
+        .tool-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-name { font-weight: bold; font-size: 1.2rem; display: block; margin-bottom: 0.5rem; }
+        .tool-desc { font-size: 0.9rem; color: #475569; display: block; margin-bottom: 1rem; }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover { transform: scale(1.05); }
+        
+        .day-tag {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.2rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>آخر أخبار الشركة السورية للبترول والنفط</h1>
-    <div id="news-feed" class="loader">جاري تحميل الأخبار...</div>
-</div>
+    <div class="container">
+        <span id="current-day" class="day-tag"></span>
+        <h1>أداة التصميم المجانية اليومية</h1>
+        <p>نختار لك كل يوم أداة تدعم العربية لمساعدتك في عملك.</p>
 
-<script>
-    // استخدام رابط RSS الخاص بوزارة النفط أو محرك بحث أخبار
-    // ملاحظة: قمنا باستخدام رابط بحث جوجل للأخبار كمثال لجلب النتائج المتعلقة بالشركة
-    const rssUrl = 'https://news.google.com/rss/search?q=الشركة+السورية+للبترول&hl=ar&gl=SA&ceid=SA:ar';
-    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+        <div class="tool-card">
+            <span id="tool-name" class="tool-name">جاري التحميل...</span>
+            <span id="tool-desc" class="tool-desc"></span>
+            <a id="tool-link" href="#" target="_blank" class="btn">زيارة الموقع</a>
+        </div>
 
-    async function fetchNews() {
-        try {
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            const feedContainer = document.getElementById('news-feed');
-            
-            if (data.status === 'ok') {
-                feedContainer.innerHTML = '';
-                data.items.forEach(item => {
-                    const article = `
-                        <div class="news-item">
-                            <a href="${item.link}" target="_blank" class="news-title">${item.title}</a>
-                            <span class="news-date">${new Date(item.pubDate).toLocaleDateString('ar-SY')}</span>
-                            <p class="news-description">${item.content.stripHtml().substring(0, 150)}...</p>
-                        </div>
-                    `;
-                    feedContainer.innerHTML += article;
-                });
-            } else {
-                feedContainer.innerHTML = 'تعذر جلب الأخبار حالياً.';
+        <small style="color: #94a3b8;">تتغير هذه الأداة تلقائياً كل 24 ساعة</small>
+    </div>
+
+    <script>
+        const tools = [
+            {
+                day: "الأحد",
+                name: "عرب فونتس",
+                desc: "أكبر مكتبة لتحميل الخطوط العربية المجانية تماماً لتصاميمك.",
+                link: "https://arbfonts.com"
+            },
+            {
+                day: "الإثنين",
+                name: "Flat Icon (Arabic Tags)",
+                desc: "ملايين الأيقونات المجانية التي يمكنك البحث عنها باللغة العربية.",
+                link: "https://www.flaticon.com"
+            },
+            {
+                day: "الثلاثاء",
+                name: "Color Hunt",
+                desc: "موقع يقدم لوحات ألوان جاهزة ومتناسقة تناسب الذوق العربي والأجنبي.",
+                link: "https://colorhunt.co"
+            },
+            {
+                day: "الأربعاء",
+                name: "Unsplash",
+                desc: "صور عالية الجودة ومجانية 100% لاستخدامها في تصاميمك بدون حقوق.",
+                link: "https://unsplash.com"
+            },
+            {
+                day: "الخميس",
+                name: "Canva Arabic",
+                desc: "أداة التصميم الأشهر التي تدعم واجهة عربية كاملة وخطوطاً عربية.",
+                link: "https://www.canva.com/ar_eg/"
+            },
+            {
+                day: "الجمعة",
+                name: "موقع بيكسلز (Pexels)",
+                desc: "فيديوهات وصور مجانية تماماً بجودة احترافية وتدعم واجهة عربية.",
+                link: "https://www.pexels.com/ar-sa/"
+            },
+            {
+                day: "السبت",
+                name: "Remove.bg",
+                desc: "أداة ذكية لإزالة خلفية الصور بضغطة زر واحدة مجاناً.",
+                link: "https://www.remove.bg/ar"
             }
-        } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('news-feed').innerHTML = 'حدث خطأ في الاتصال.';
+        ];
+
+        function updateTool() {
+            const date = new Date();
+            const dayIndex = date.getDay(); // الأحد = 0
+            const todayTool = tools[dayIndex];
+
+            document.getElementById('current-day').innerText = "يوم " + todayTool.day;
+            document.getElementById('tool-name').innerText = todayTool.name;
+            document.getElementById('tool-desc').innerText = todayTool.desc;
+            document.getElementById('tool-link').href = todayTool.link;
         }
-    }
 
-    // وظيفة مساعدة لتنظيف النص من وسوم HTML
-    String.prototype.stripHtml = function() {
-        return this.replace(/<[^>]*>?/gm, '');
-    };
-
-    fetchNews();
-</script>
-
+        updateTool();
+    </script>
 </body>
 </html>
