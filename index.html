@@ -1,3 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>المساعد الإداري</title>
+
+<style>
+body {
+    font-family: Arial;
+    direction: rtl;
+    text-align: center;
+    background: #f5f5f5;
+    padding: 20px;
+}
+
+select, button {
+    padding: 10px;
+    font-size: 16px;
+    margin: 10px;
+}
+
+textarea {
+    width: 90%;
+    height: 200px;
+    margin-top: 20px;
+    font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>📄 المساعد الإداري</h2>
+
+<select id="type">
+    <option value="">اختر نوع المعاملة</option>
+    <option value="ta3ziya">تعزية</option>
+    <option value="i3lan">إعلان</option>
+    <option value="ta3mem">تعميم</option>
+</select>
+
+<br>
+
+<button onclick="generate()">إنشاء النص</button>
+
+<br>
+
+<textarea id="result" placeholder="سيظهر النص هنا..."></textarea>
+
 <script>
-window.location.href = "https://www.youtube.com";
+function generate() {
+    let type = document.getElementById("type").value;
+    let text = "";
+
+    if(type === "ta3ziya") {
+        text = "بقلوب مؤمنة بقضاء الله وقدره، نتقدم بأحر التعازي والمواساة...\nنسأل الله الرحمة للفقيد والصبر لذويه.";
+    }
+
+    else if(type === "i3lan") {
+        text = "إعلان هام:\nيرجى من جميع العاملين الالتزام بالتعليمات الصادرة عن الإدارة...";
+    }
+
+    else if(type === "ta3mem") {
+        text = "تعميم:\nيُطلب من كافة العاملين التقيد بالدوام الرسمي وتنفيذ المهام المطلوبة بدقة.";
+    }
+
+    document.getElementById("result").value = text;
+}
 </script>
+
+</body>
+</html>
