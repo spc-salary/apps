@@ -2,70 +2,204 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>المساعد الإداري</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المساعد الإداري الاحترافي</title>
 
 <style>
 body {
     font-family: Arial;
     direction: rtl;
-    text-align: center;
-    background: #f5f5f5;
-    padding: 20px;
+    margin: 0;
+    background: #f0f2f5;
 }
 
-select, button {
-    padding: 10px;
+.header {
+    background: #2c3e50;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.container {
+    padding: 15px;
+}
+
+select, input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
     font-size: 16px;
-    margin: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #3498db;
+    color: white;
+    border: none;
+}
+
+button:hover {
+    background: #2980b9;
 }
 
 textarea {
-    width: 90%;
-    height: 200px;
-    margin-top: 20px;
-    font-size: 16px;
+    width: 100%;
+    height: 220px;
+    margin-top: 15px;
+    font-size: 15px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.actions button {
+    flex: 1;
 }
 </style>
 </head>
 
 <body>
 
-<h2>📄 المساعد الإداري</h2>
+<div class="header">📄 المساعد الإداري</div>
 
-<select id="type">
+<div class="container">
+
+<select id="category">
     <option value="">اختر نوع المعاملة</option>
     <option value="ta3ziya">تعزية</option>
     <option value="i3lan">إعلان</option>
     <option value="ta3mem">تعميم</option>
+    <option value="talab">طلب</option>
 </select>
 
-<br>
+<select id="template">
+    <option value="">اختر النموذج</option>
+</select>
+
+<input type="text" id="name" placeholder="اسم الشخص أو الجهة">
+<input type="text" id="date" placeholder="التاريخ">
 
 <button onclick="generate()">إنشاء النص</button>
 
-<br>
-
 <textarea id="result" placeholder="سيظهر النص هنا..."></textarea>
 
+<div class="actions">
+    <button onclick="copyText()">📋 نسخ</button>
+    <button onclick="shareText()">📤 مشاركة</button>
+</div>
+
+</div>
+
 <script>
+
+const templates = {
+
+ta3ziya: [
+"بقلوب مؤمنة بقضاء الله وقدره، نتقدم بأحر التعازي بوفاة {{name}}، سائلين الله أن يتغمده بواسع رحمته وأن يلهم ذويه الصبر والسلوان.",
+"نتقدم بخالص التعازي والمواساة بوفاة {{name}}، نسأل الله الرحمة والمغفرة.",
+"ببالغ الحزن ننعى وفاة {{name}}، سائلين الله أن يسكنه فسيح جناته.",
+"إنا لله وإنا إليه راجعون، نتقدم بالتعازي بوفاة {{name}}.",
+"بكل أسى وحزن نتقدم بالتعازي لوفاة {{name}}.",
+"نسأل الله الرحمة للفقيد {{name}} وأن يلهم أهله الصبر.",
+"خالص العزاء بوفاة {{name}}.",
+"تعازينا القلبية بوفاة {{name}}.",
+"رحم الله {{name}} وغفر له.",
+"عظم الله أجركم بوفاة {{name}}."
+],
+
+i3lan: [
+"إعلان هام: يرجى من جميع العاملين الالتزام بالتعليمات اعتباراً من تاريخ {{date}}.",
+"تعلن الإدارة عن إجراء جديد يبدأ بتاريخ {{date}}.",
+"يرجى الانتباه إلى التعليمات الجديدة اعتباراً من {{date}}.",
+"إعلان: سيتم تنفيذ القرار اعتباراً من {{date}}.",
+"تنويه هام لجميع الموظفين بتاريخ {{date}}.",
+"إعلان إداري بخصوص العمل بتاريخ {{date}}.",
+"يرجى التقيد بالتعليمات الجديدة.",
+"تعميم إعلان إداري.",
+"إشعار مهم للعاملين.",
+"تنبيه إداري هام."
+],
+
+ta3mem: [
+"تعميم: يُطلب من الجميع الالتزام بالدوام الرسمي اعتباراً من {{date}}.",
+"تعميم إداري بضرورة التقيد بالتعليمات.",
+"يرجى تنفيذ ما ورد أعلاه بدقة.",
+"تعميم هام لجميع الأقسام.",
+"التقيد الكامل بالتعليمات واجب.",
+"تعميم إداري عام.",
+"الالتزام بالإجراءات الجديدة.",
+"ضرورة التقيد بالتعليمات.",
+"تعميم تنظيمي.",
+"قرار إداري واجب التنفيذ."
+],
+
+talab: [
+"طلب: يرجى الموافقة على {{name}}.",
+"أتقدم بطلب {{name}} اعتباراً من {{date}}.",
+"يرجى التكرم بالموافقة على الطلب.",
+"طلب رسمي بخصوص {{name}}.",
+"أرجو الموافقة على الطلب المذكور.",
+"تقديم طلب إداري.",
+"طلب إجراء معين.",
+"طلب خدمة إدارية.",
+"طلب متابعة.",
+"طلب تنفيذ إجراء."
+]
+
+};
+
+// تحميل النماذج
+document.getElementById("category").onchange = function() {
+    let cat = this.value;
+    let templateSelect = document.getElementById("template");
+    templateSelect.innerHTML = '<option value="">اختر النموذج</option>';
+
+    if(templates[cat]) {
+        templates[cat].forEach((t, i) => {
+            templateSelect.innerHTML += `<option value="${i}">نموذج ${i+1}</option>`;
+        });
+    }
+};
+
+// إنشاء النص
 function generate() {
-    let type = document.getElementById("type").value;
-    let text = "";
+    let cat = document.getElementById("category").value;
+    let index = document.getElementById("template").value;
+    let name = document.getElementById("name").value || "........";
+    let date = document.getElementById("date").value || "........";
 
-    if(type === "ta3ziya") {
-        text = "بقلوب مؤمنة بقضاء الله وقدره، نتقدم بأحر التعازي والمواساة...\nنسأل الله الرحمة للفقيد والصبر لذويه.";
-    }
+    let text = templates[cat][index];
 
-    else if(type === "i3lan") {
-        text = "إعلان هام:\nيرجى من جميع العاملين الالتزام بالتعليمات الصادرة عن الإدارة...";
-    }
-
-    else if(type === "ta3mem") {
-        text = "تعميم:\nيُطلب من كافة العاملين التقيد بالدوام الرسمي وتنفيذ المهام المطلوبة بدقة.";
-    }
+    text = text.replace("{{name}}", name);
+    text = text.replace("{{date}}", date);
 
     document.getElementById("result").value = text;
 }
+
+// نسخ
+function copyText() {
+    let text = document.getElementById("result");
+    text.select();
+    document.execCommand("copy");
+    alert("تم النسخ");
+}
+
+// مشاركة
+function shareText() {
+    let text = document.getElementById("result").value;
+    if(navigator.share){
+        navigator.share({text});
+    } else {
+        alert("المشاركة غير مدعومة على هذا الجهاز");
+    }
+}
+
 </script>
 
 </body>
