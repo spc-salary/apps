@@ -1,206 +1,655 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>المساعد الإداري الاحترافي</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DesignKit – أدوات تصميم المواقع</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<style>
-body {
-    font-family: Arial;
-    direction: rtl;
-    margin: 0;
-    background: #f0f2f5;
-}
+    :root {
+      --bg: #0d0d14;
+      --card: #1a1a2e;
+      --surface: #16162a;
+      --border: #2a2a40;
+      --input: #242438;
+      --primary: #7c3aed;
+      --primary-light: rgba(124,58,237,0.15);
+      --accent: #06b6d4;
+      --accent-light: rgba(6,182,212,0.15);
+      --fg: #f0f0f5;
+      --muted: #8888aa;
+      --tag-bg: #2a1f4e;
+      --tag-fg: #c4b5fd;
+      --radius: 14px;
+      --font: 'Cairo', sans-serif;
+    }
 
-.header {
-    background: #2c3e50;
-    color: white;
-    padding: 15px;
-    text-align: center;
-    font-size: 20px;
-}
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
 
-.container {
-    padding: 15px;
-}
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,13,20,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px 0;
+    }
 
-select, input, button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
 
-button {
-    background: #3498db;
-    color: white;
-    border: none;
-}
+    .app-title {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #a78bfa, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-button:hover {
-    background: #2980b9;
-}
+    .theme-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 12px;
+      color: var(--muted);
+      font-size: 18px;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .theme-btn:hover { border-color: var(--primary); color: var(--fg); }
 
-textarea {
-    width: 100%;
-    height: 220px;
-    margin-top: 15px;
-    font-size: 15px;
-    padding: 10px;
-    border-radius: 8px;
-}
+    .main-tabs { display: flex; gap: 4px; }
 
-.actions {
-    display: flex;
-    gap: 10px;
-}
+    .main-tab {
+      flex: 1;
+      padding: 10px 4px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
 
-.actions button {
-    flex: 1;
-}
-</style>
+    .main-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .tab-count {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .panel { display: none; padding: 20px; }
+    .panel.active { display: block; }
+
+    .search-wrap { position: relative; margin-bottom: 14px; }
+
+    .search-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 42px 11px 40px;
+      color: var(--fg);
+      font-family: var(--font);
+      font-size: 14px;
+      outline: none;
+      transition: border-color .2s;
+      direction: rtl;
+    }
+
+    .search-input:focus { border-color: var(--primary); }
+    .search-input::placeholder { color: var(--muted); }
+
+    .clear-btn {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      display: none;
+      line-height: 1;
+      padding: 2px;
+    }
+
+    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+
+    .chip {
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: .18s;
+      white-space: nowrap;
+    }
+    .chip:hover { border-color: var(--primary); color: var(--fg); }
+    .chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+    .tool-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: border-color .2s, transform .15s;
+    }
+    .tool-card:hover { border-color: rgba(124,58,237,0.4); transform: translateY(-1px); }
+
+    .tool-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+
+    .tool-icon {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      background: var(--primary-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+
+    .tool-meta { flex: 1; }
+
+    .tool-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+    .tool-name { font-size: 16px; font-weight: 700; }
+
+    .free-badge {
+      background: var(--accent-light); color: var(--accent);
+      font-size: 10px; font-weight: 700;
+      padding: 2px 7px; border-radius: 6px;
+    }
+
+    .tool-category { font-size: 12px; color: var(--muted); }
+
+    .save-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 18px; color: var(--muted);
+      transition: .2s; padding: 2px; flex-shrink: 0;
+    }
+    .save-btn.saved { color: var(--primary); }
+    .save-btn:hover { color: var(--fg); }
+
+    .tool-desc { font-size: 13px; color: var(--muted); margin-bottom: 10px; line-height: 1.6; }
+
+    .update-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+
+    .update-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+
+    .update-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%; background: var(--primary); flex-shrink: 0;
+    }
+
+    .update-version { font-size: 12px; font-weight: 700; color: var(--primary); }
+    .update-date { font-size: 12px; color: var(--muted); }
+    .update-summary { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+
+    .update-highlights { list-style: none; }
+    .update-highlights li {
+      font-size: 12px; color: var(--muted);
+      padding: 1px 12px 1px 0; position: relative;
+    }
+    .update-highlights li::before { content: '•'; position: absolute; right: 0; color: var(--accent); }
+
+    .tool-footer { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+    .tag {
+      background: var(--tag-bg); color: var(--tag-fg);
+      font-size: 11px; font-weight: 600;
+      padding: 3px 9px; border-radius: 8px;
+    }
+
+    .rating { margin-right: auto; display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
+
+    .palette-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 12px;
+      transition: border-color .2s, transform .15s;
+    }
+    .palette-card:hover { border-color: rgba(124,58,237,0.4); transform: translateY(-1px); }
+
+    .swatches { display: flex; height: 80px; }
+
+    .swatch { flex: 1; position: relative; cursor: pointer; transition: flex .2s; }
+    .swatch:hover { flex: 1.4; }
+
+    .swatch-tooltip {
+      position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.6); color: #fff;
+      font-size: 9px; padding: 2px 5px; border-radius: 4px;
+      white-space: nowrap; opacity: 0; transition: opacity .15s; pointer-events: none;
+    }
+    .swatch:hover .swatch-tooltip { opacity: 1; }
+
+    .copied-flash {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; opacity: 0; transition: opacity .2s;
+    }
+
+    .palette-body { padding: 12px 14px 8px; }
+
+    .palette-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; margin-bottom: 4px;
+    }
+
+    .palette-name { font-size: 15px; font-weight: 700; }
+    .palette-actions { display: flex; gap: 10px; }
+
+    .icon-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 16px; color: var(--muted); transition: .2s; padding: 2px;
+    }
+    .icon-btn:hover { color: var(--fg); }
+    .icon-btn.saved { color: var(--primary); }
+
+    .palette-desc { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+
+    .hex-row { display: flex; margin-bottom: 10px; }
+    .hex-label { flex: 1; font-size: 9px; color: var(--muted); text-align: center; }
+
+    .palette-tags { display: flex; gap: 6px; flex-wrap: wrap; padding-bottom: 4px; }
+
+    .mood-badge {
+      background: var(--tag-bg); color: var(--tag-fg);
+      font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 8px;
+    }
+
+    .ptag { background: var(--surface); color: var(--muted); font-size: 11px; padding: 3px 9px; border-radius: 8px; }
+
+    .saved-tab-bar {
+      display: flex; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 4px; gap: 4px; margin-bottom: 16px;
+    }
+
+    .saved-tab {
+      flex: 1; padding: 8px; border-radius: 10px;
+      background: none; border: none;
+      font-family: var(--font); font-size: 14px; font-weight: 600;
+      color: var(--muted); cursor: pointer; transition: .2s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .saved-tab.active { background: var(--primary); color: #fff; }
+
+    .empty-state { text-align: center; padding: 80px 20px 40px; }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: .3; }
+    .empty-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+    .empty-desc { font-size: 14px; color: var(--muted); }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 18px;
+      font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+      z-index: 9999; opacity: 0;
+      transition: opacity .25s, transform .25s;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    body.light {
+      --bg: #f5f4ff; --card: #ffffff; --surface: #eeedfb;
+      --border: #ddd8f8; --input: #e8e4fb;
+      --primary: #7c3aed; --primary-light: rgba(124,58,237,0.1);
+      --accent: #06b6d4; --accent-light: rgba(6,182,212,0.1);
+      --fg: #0d0d14; --muted: #6b6b8a;
+      --tag-bg: #ede9fe; --tag-fg: #5b21b6;
+    }
+    body.light .app-header { background: rgba(245,244,255,0.9); }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    @media (min-width: 700px) {
+      .app-header, .panel { max-width: 740px; margin: 0 auto; }
+    }
+    @media (min-width: 1000px) {
+      #tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      #tools-grid .tool-card { margin-bottom: 0; }
+      #palettes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      #palettes-grid .palette-card { margin-bottom: 0; }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="header">📄 المساعد الإداري</div>
+<header class="app-header">
+  <div class="header-top">
+    <span class="app-title">🎨 DesignKit</span>
+    <button class="theme-btn" id="themeBtn">☀️</button>
+  </div>
+  <div class="main-tabs">
+    <button class="main-tab active" data-tab="tools">🔧 الأدوات</button>
+    <button class="main-tab" data-tab="colors">🎨 الألوان</button>
+    <button class="main-tab" data-tab="saved">🔖 المحفوظات <span class="tab-count" id="saved-count" style="display:none">0</span></button>
+  </div>
+</header>
 
-<div class="container">
-
-<select id="category">
-    <option value="">اختر نوع المعاملة</option>
-    <option value="ta3ziya">تعزية</option>
-    <option value="i3lan">إعلان</option>
-    <option value="ta3mem">تعميم</option>
-    <option value="talab">طلب</option>
-</select>
-
-<select id="template">
-    <option value="">اختر النموذج</option>
-</select>
-
-<input type="text" id="name" placeholder="اسم الشخص أو الجهة">
-<input type="text" id="date" placeholder="التاريخ">
-
-<button onclick="generate()">إنشاء النص</button>
-
-<textarea id="result" placeholder="سيظهر النص هنا..."></textarea>
-
-<div class="actions">
-    <button onclick="copyText()">📋 نسخ</button>
-    <button onclick="shareText()">📤 مشاركة</button>
+<div class="panel active" id="tab-tools">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="tools-search" placeholder="ابحث عن أداة..." />
+    <button class="clear-btn" id="tools-clear">✕</button>
+  </div>
+  <div class="filter-row" id="tools-filters"></div>
+  <div id="tools-grid"></div>
 </div>
 
+<div class="panel" id="tab-colors">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="colors-search" placeholder="ابحث باللون أو الاسم..." />
+    <button class="clear-btn" id="colors-clear">✕</button>
+  </div>
+  <div class="filter-row" id="colors-filters"></div>
+  <div id="palettes-grid"></div>
 </div>
+
+<div class="panel" id="tab-saved">
+  <div class="saved-tab-bar">
+    <button class="saved-tab active" id="st-tools">🔧 الأدوات</button>
+    <button class="saved-tab" id="st-palettes">🎨 الألوان</button>
+  </div>
+  <div id="saved-tools-list"></div>
+  <div id="saved-palettes-list" style="display:none"></div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
+const TOOLS = [
+  { id:"figma", name:"Figma", description:"أداة التصميم التعاوني للفرق التي تبني المنتجات الرقمية.", category:"تصميم", url:"https://figma.com", tags:["UI","Prototype","تعاون"], isFree:true, rating:4.9, icon:"🖊️", updates:[{ version:"116.0", date:"2026-04-28", summary:"تحسينات توليد التصميم بالذكاء الاصطناعي", highlights:["اقتراحات تخطيط تلقائي أسرع","نظام متغيرات جديد","تصدير كود أفضل في وضع Dev"] }] },
+  { id:"tailwind", name:"Tailwind CSS", description:"إطار CSS يعتمد الأدوات لبناء واجهات مخصصة بسرعة.", category:"CSS", url:"https://tailwindcss.com", tags:["CSS","Utility","Responsive"], isFree:true, rating:4.8, icon:"💨", updates:[{ version:"4.1", date:"2026-04-10", summary:"تحسينات أداء ضخمة", highlights:["محرك Lightning CSS افتراضي","دعم @starting-style","Container queries","بناء أسرع 10× بـ Rust"] }] },
+  { id:"shadcn", name:"shadcn/ui", description:"مكونات جميلة مبنية على Radix UI وTailwind CSS.", category:"مكونات", url:"https://ui.shadcn.com", tags:["Components","Radix","Tailwind"], isFree:true, rating:4.9, icon:"🧩", updates:[{ version:"2.6", date:"2026-05-01", summary:"مكونات رسوم بيانية وشريط جانبي", highlights:["Sidebar قابل للطي","مخططات Area/Bar/Pie","نظام Dark mode محسّن"] }] },
+  { id:"framer", name:"Framer", description:"أداة تصميم المواقع بأنيميشن احترافي.", category:"بناء مواقع", url:"https://framer.com", tags:["Animation","No-Code","CMS"], isFree:true, rating:4.7, icon:"⚡", updates:[{ version:"2026.4", date:"2026-04-22", summary:"توليد تصميم بالذكاء الاصطناعي", highlights:["أقسام AI من نص","استيراد CMS من Notion","أنيميشن Scroll"] }] },
+  { id:"webflow", name:"Webflow", description:"صمّم وابنِ واطلق مواقع متجاوبة بصرياً.", category:"بناء مواقع", url:"https://webflow.com", tags:["No-Code","CMS","E-commerce"], isFree:false, rating:4.6, icon:"🌐", updates:[{ version:"2026.Q2", date:"2026-04-05", summary:"تحسينات Logic والذكاء الاصطناعي", highlights:["Logic Builder بيتا","كتابة AI مدمجة","تحسين Localization"] }] },
+  { id:"coolors", name:"Coolors", description:"مولّد لوحات الألوان الأسرع للمصممين والمطورين.", category:"ألوان", url:"https://coolors.co", tags:["ألوان","لوحة","مولّد"], isFree:true, rating:4.7, icon:"🌈", updates:[{ version:"5.2", date:"2026-03-30", summary:"توليد ألوان من صور بالذكاء الاصطناعي", highlights:["استخراج لوحات من صور","اقتراحات Harmony","مدقق Contrast"] }] },
+  { id:"storybook", name:"Storybook", description:"بناء مكونات UI وصفحات بشكل معزول.", category:"مكونات", url:"https://storybook.js.org", tags:["Components","Testing","Docs"], isFree:true, rating:4.6, icon:"📖", updates:[{ version:"8.5", date:"2026-04-18", summary:"تكامل Vitest ومشغّل اختبارات جديد", highlights:["اختبار مكونات Vitest","Portable stories","أداء أفضل مع Vite 6"] }] },
+  { id:"gsap", name:"GSAP", description:"مكتبة أنيميشن JavaScript احترافية للويب الحديث.", category:"أنيميشن", url:"https://gsap.com", tags:["Animation","JS","SVG"], isFree:true, rating:4.9, icon:"🚀", updates:[{ version:"3.13", date:"2026-04-01", summary:"تحديث ضخم لـ ScrollTrigger", highlights:["ScrollTrigger v2 بدعم موبايل أفضل","SplitText 3.0","خطافات React محسّنة"] }] },
+  { id:"motion", name:"Motion", description:"مكتبة أنيميشن جاهزة للإنتاج لـ React وVanilla JS.", category:"أنيميشن", url:"https://motion.dev", tags:["Animation","React","Gestures"], isFree:true, rating:4.8, icon:"✨", updates:[{ version:"12.0", date:"2026-03-12", summary:"إعادة تصميم API مع حزمة مصغّرة", highlights:["حزمة mini أقل من 5KB","API إيماءات محسّن","تكامل View Transitions"] }] },
+  { id:"fontjoy", name:"Fontjoy", description:"توليد توافقات خطوط بالتعلم العميق.", category:"خطوط", url:"https://fontjoy.com", tags:["خطوط","Typography","AI"], isFree:true, rating:4.4, icon:"🔤", updates:[{ version:"3.1", date:"2026-02-10", summary:"نموذج توافق محسّن مع Variable Fonts", highlights:["دعم Variable Fonts","نموذج توافق جديد"] }] }
+];
 
-const templates = {
+const PALETTES = [
+  { id:"sunset", name:"Sunset Horizon", description:"ألوان دافئة مثالية للمحافظ الإبداعية", mood:"دافئ", tags:["دافئ","إبداعي"], colors:[{hex:"#FF6B6B",name:"مرجاني"},{hex:"#FF8E53",name:"يسرجي"},{hex:"#FFC107",name:"عنبري"},{hex:"#FF5E7E",name:"وردي"},{hex:"#7C3AED",name:"بنفسجي"}] },
+  { id:"ocean", name:"Ocean Depths", description:"أزرق المحيط لمنتجات التقنية", mood:"بارد", tags:["بارد","تقنية"], colors:[{hex:"#0EA5E9",name:"سماوي"},{hex:"#0284C7",name:"محيطي"},{hex:"#0369A1",name:"عميق"},{hex:"#06B6D4",name:"سيان"},{hex:"#164E63",name:"هاوية"}] },
+  { id:"forest", name:"Forest Walk", description:"أخضر الطبيعة لعلامات البيئة والعافية", mood:"طبيعي", tags:["طبيعي","بيئة"], colors:[{hex:"#16A34A",name:"غابة"},{hex:"#4ADE80",name:"ورقة"},{hex:"#BBF7D0",name:"نعناع"},{hex:"#166534",name:"سرخس"},{hex:"#CA8A04",name:"لحاء"}] },
+  { id:"mono", name:"Minimal Mono", description:"أحادي اللون للمواقع الحديثة والبسيطة", mood:"بسيط", tags:["بسيط","حديث"], colors:[{hex:"#0A0A0A",name:"أسود"},{hex:"#2A2A2A",name:"فحمي"},{hex:"#737373",name:"رمادي"},{hex:"#D4D4D4",name:"فضي"},{hex:"#FAFAFA",name:"أبيض"}] },
+  { id:"neon", name:"Neon Noir", description:"لوحة مستوحاة من Cyberpunk لواجهات الوضع الداكن", mood:"داكن", tags:["داكن","نيون"], colors:[{hex:"#0D0D14",name:"فراغ"},{hex:"#7C3AED",name:"بنفسجي"},{hex:"#06B6D4",name:"نيون سيان"},{hex:"#F0ABFC",name:"وهج وردي"},{hex:"#1A1A2E",name:"نيلي داكن"}] },
+  { id:"pastel", name:"Pastel Dream", description:"باستيل ناعم لعلامات نمط الحياة والجمال", mood:"ناعم", tags:["ناعم","جمال"], colors:[{hex:"#FDF2F8",name:"وردة"},{hex:"#FBC2EB",name:"بتلة"},{hex:"#C7D2FE",name:"خزامى"},{hex:"#BAE6FD",name:"أزرق فاتح"},{hex:"#BBF7D0",name:"مريمية"}] },
+  { id:"earthy", name:"Earthy Tones", description:"ألوان الأرض للعلامات الحرفية", mood:"دافئ", tags:["دافئ","حرفي"], colors:[{hex:"#C2410C",name:"تيراكوتا"},{hex:"#B45309",name:"صدأ"},{hex:"#D97706",name:"أوكر"},{hex:"#78350F",name:"ماهوجني"},{hex:"#FBBF24",name:"عسلي"}] },
+  { id:"corporate", name:"Corporate Blue", description:"أزرق احترافي للمال والمؤسسات", mood:"احترافي", tags:["احترافي","مال"], colors:[{hex:"#1E3A5F",name:"نيفي"},{hex:"#2563EB",name:"ملكي"},{hex:"#60A5FA",name:"سماوي"},{hex:"#DBEAFE",name:"جليدي"},{hex:"#F8FAFC",name:"أبيض"}] },
+  { id:"retro", name:"Retro Pop", description:"ألوان ريترو جريئة للمنتجات المرحة", mood:"مرح", tags:["مرح","جريء"], colors:[{hex:"#FBBF24",name:"أصفر"},{hex:"#F87171",name:"أحمر"},{hex:"#34D399",name:"نعناع"},{hex:"#60A5FA",name:"أزرق"},{hex:"#A78BFA",name:"بنفسجي"}] },
+  { id:"luxury", name:"Midnight Luxury", description:"ألوان جوهر عميقة للعلامات الفاخرة", mood:"فخامة", tags:["فخامة","بريميوم"], colors:[{hex:"#1E0A3C",name:"منتصف الليل"},{hex:"#4C1D95",name:"بنفسجي عميق"},{hex:"#D4AF37",name:"ذهبي"},{hex:"#9D4EDD",name:"أميثيست"},{hex:"#F5F0FF",name:"لؤلؤ"}] },
+  { id:"nordic", name:"Nordic Cool", description:"لوحة إسكندنافية للتصميم النظيف", mood:"بارد", tags:["بارد","بسيط"], colors:[{hex:"#EFF6FF",name:"قطبي"},{hex:"#BFDBFE",name:"صقيع"},{hex:"#3B82F6",name:"فيورد"},{hex:"#1D4ED8",name:"كهف جليدي"},{hex:"#1E293B",name:"أردوازي"}] },
+  { id:"tropical", name:"Tropical Vibes", description:"ألوان استوائية للسفر والترفيه", mood:"نشيط", tags:["نشيط","سفر"], colors:[{hex:"#10B981",name:"غابة"},{hex:"#F59E0B",name:"مانجو"},{hex:"#EF4444",name:"هيبيسكوس"},{hex:"#06B6D4",name:"بحيرة"},{hex:"#8B5CF6",name:"أوركيد"}] }
+];
 
-ta3ziya: [
-"بقلوب مؤمنة بقضاء الله وقدره، نتقدم بأحر التعازي بوفاة {{name}}، سائلين الله أن يتغمده بواسع رحمته وأن يلهم ذويه الصبر والسلوان.",
-"نتقدم بخالص التعازي والمواساة بوفاة {{name}}، نسأل الله الرحمة والمغفرة.",
-"ببالغ الحزن ننعى وفاة {{name}}، سائلين الله أن يسكنه فسيح جناته.",
-"إنا لله وإنا إليه راجعون، نتقدم بالتعازي بوفاة {{name}}.",
-"بكل أسى وحزن نتقدم بالتعازي لوفاة {{name}}.",
-"نسأل الله الرحمة للفقيد {{name}} وأن يلهم أهله الصبر.",
-"خالص العزاء بوفاة {{name}}.",
-"تعازينا القلبية بوفاة {{name}}.",
-"رحم الله {{name}} وغفر له.",
-"عظم الله أجركم بوفاة {{name}}."
-],
-
-i3lan: [
-"إعلان هام: يرجى من جميع العاملين الالتزام بالتعليمات اعتباراً من تاريخ {{date}}.",
-"تعلن الإدارة عن إجراء جديد يبدأ بتاريخ {{date}}.",
-"يرجى الانتباه إلى التعليمات الجديدة اعتباراً من {{date}}.",
-"إعلان: سيتم تنفيذ القرار اعتباراً من {{date}}.",
-"تنويه هام لجميع الموظفين بتاريخ {{date}}.",
-"إعلان إداري بخصوص العمل بتاريخ {{date}}.",
-"يرجى التقيد بالتعليمات الجديدة.",
-"تعميم إعلان إداري.",
-"إشعار مهم للعاملين.",
-"تنبيه إداري هام."
-],
-
-ta3mem: [
-"تعميم: يُطلب من الجميع الالتزام بالدوام الرسمي اعتباراً من {{date}}.",
-"تعميم إداري بضرورة التقيد بالتعليمات.",
-"يرجى تنفيذ ما ورد أعلاه بدقة.",
-"تعميم هام لجميع الأقسام.",
-"التقيد الكامل بالتعليمات واجب.",
-"تعميم إداري عام.",
-"الالتزام بالإجراءات الجديدة.",
-"ضرورة التقيد بالتعليمات.",
-"تعميم تنظيمي.",
-"قرار إداري واجب التنفيذ."
-],
-
-talab: [
-"طلب: يرجى الموافقة على {{name}}.",
-"أتقدم بطلب {{name}} اعتباراً من {{date}}.",
-"يرجى التكرم بالموافقة على الطلب.",
-"طلب رسمي بخصوص {{name}}.",
-"أرجو الموافقة على الطلب المذكور.",
-"تقديم طلب إداري.",
-"طلب إجراء معين.",
-"طلب خدمة إدارية.",
-"طلب متابعة.",
-"طلب تنفيذ إجراء."
-]
-
+const state = {
+  toolsQuery:"", toolsCategory:"الكل",
+  colorsQuery:"", colorsMood:"الكل",
+  savedTools: JSON.parse(localStorage.getItem("dk_tools")||"[]"),
+  savedPalettes: JSON.parse(localStorage.getItem("dk_palettes")||"[]"),
 };
 
-// تحميل النماذج
-document.getElementById("category").onchange = function() {
-    let cat = this.value;
-    let templateSelect = document.getElementById("template");
-    templateSelect.innerHTML = '<option value="">اختر النموذج</option>';
-
-    if(templates[cat]) {
-        templates[cat].forEach((t, i) => {
-            templateSelect.innerHTML += `<option value="${i}">نموذج ${i+1}</option>`;
-        });
-    }
-};
-
-// إنشاء النص
-function generate() {
-    let cat = document.getElementById("category").value;
-    let index = document.getElementById("template").value;
-    let name = document.getElementById("name").value || "........";
-    let date = document.getElementById("date").value || "........";
-
-    let text = templates[cat][index];
-
-    text = text.replace("{{name}}", name);
-    text = text.replace("{{date}}", date);
-
-    document.getElementById("result").value = text;
+function persist() {
+  localStorage.setItem("dk_tools", JSON.stringify(state.savedTools));
+  localStorage.setItem("dk_palettes", JSON.stringify(state.savedPalettes));
 }
 
-// نسخ
-function copyText() {
-    let text = document.getElementById("result");
-    text.select();
-    document.execCommand("copy");
-    alert("تم النسخ");
+function daysAgo(d) {
+  const diff = Math.floor((Date.now()-new Date(d).getTime())/86400000);
+  if(diff===0)return"اليوم"; if(diff===1)return"أمس";
+  if(diff<7)return`${diff} أيام`; if(diff<30)return`${Math.floor(diff/7)} أسابيع`;
+  return`${Math.floor(diff/30)} شهور`;
 }
 
-// مشاركة
-function shareText() {
-    let text = document.getElementById("result").value;
-    if(navigator.share){
-        navigator.share({text});
-    } else {
-        alert("المشاركة غير مدعومة على هذا الجهاز");
-    }
+function showToast(msg) {
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2200);
 }
 
+// --- TOOLS ---
+const TOOL_CATEGORIES=["الكل",...new Set(TOOLS.map(t=>t.category))];
+
+function renderToolFilters(){
+  const el=document.getElementById("tools-filters");
+  el.innerHTML=TOOL_CATEGORIES.map(c=>`<button class="chip ${c===state.toolsCategory?'active':''}" data-cat="${c}">${c}</button>`).join("");
+  el.querySelectorAll(".chip").forEach(btn=>btn.addEventListener("click",()=>{state.toolsCategory=btn.dataset.cat;renderToolFilters();renderTools();}));
+}
+
+function renderTools(){
+  const q=state.toolsQuery.toLowerCase();
+  const filtered=TOOLS.filter(t=>{
+    const mc=state.toolsCategory==="الكل"||t.category===state.toolsCategory;
+    const mq=!q||t.name.toLowerCase().includes(q)||t.description.includes(q)||t.tags.some(tag=>tag.toLowerCase().includes(q));
+    return mc&&mq;
+  });
+  const grid=document.getElementById("tools-grid");
+  if(!filtered.length){grid.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">لا توجد أدوات</div><div class="empty-desc">جرّب بحثاً أو فئة أخرى</div></div>`;return;}
+  grid.innerHTML=filtered.map(t=>toolHTML(t)).join("");
+  grid.querySelectorAll("[data-save-tool]").forEach(btn=>btn.addEventListener("click",()=>{toggleSaveTool(btn.dataset.saveTool);renderTools();renderSaved();updateSavedCount();}));
+}
+
+function toolHTML(tool){
+  const saved=state.savedTools.includes(tool.id);
+  const u=tool.updates[0];
+  return`<div class="tool-card">
+    <div class="tool-header">
+      <div class="tool-icon">${tool.icon}</div>
+      <div class="tool-meta">
+        <div class="tool-name-row">
+          <a href="${tool.url}" target="_blank" style="color:var(--fg);text-decoration:none"><span class="tool-name">${tool.name}</span></a>
+          ${tool.isFree?'<span class="free-badge">مجاني</span>':''}
+        </div>
+        <div class="tool-category">${tool.category}</div>
+      </div>
+      <button class="save-btn ${saved?'saved':''}" data-save-tool="${tool.id}">🔖</button>
+    </div>
+    <div class="tool-desc">${tool.description}</div>
+    ${u?`<div class="update-box">
+      <div class="update-header"><div class="update-dot"></div><span class="update-version">v${u.version}</span><span class="update-date">· ${daysAgo(u.date)}</span></div>
+      <div class="update-summary">${u.summary}</div>
+      <ul class="update-highlights">${u.highlights.map(h=>`<li>${h}</li>`).join("")}</ul>
+    </div>`:""}
+    <div class="tool-footer">${tool.tags.map(tag=>`<span class="tag">${tag}</span>`).join("")}<div class="rating">⭐ ${tool.rating}</div></div>
+  </div>`;
+}
+
+// --- PALETTES ---
+const MOODS=["الكل",...new Set(PALETTES.map(p=>p.mood))];
+
+function renderColorFilters(){
+  const el=document.getElementById("colors-filters");
+  el.innerHTML=MOODS.map(m=>`<button class="chip ${m===state.colorsMood?'active':''}" data-mood="${m}">${m}</button>`).join("");
+  el.querySelectorAll(".chip").forEach(btn=>btn.addEventListener("click",()=>{state.colorsMood=btn.dataset.mood;renderColorFilters();renderPalettes();}));
+}
+
+function renderPalettes(){
+  const q=state.colorsQuery.toLowerCase();
+  const filtered=PALETTES.filter(p=>{
+    const mm=state.colorsMood==="الكل"||p.mood===state.colorsMood;
+    const mq=!q||p.name.toLowerCase().includes(q)||p.description.includes(q)||p.tags.some(t=>t.includes(q))||p.colors.some(c=>c.hex.toLowerCase().includes(q)||c.name.includes(q));
+    return mm&&mq;
+  });
+  const grid=document.getElementById("palettes-grid");
+  if(!filtered.length){grid.innerHTML=`<div class="empty-state"><div class="empty-icon">🎨</div><div class="empty-title">لا توجد لوحات</div><div class="empty-desc">جرّب بحثاً أو مزاجاً آخر</div></div>`;return;}
+  grid.innerHTML=filtered.map(p=>paletteHTML(p)).join("");
+  attachPaletteEvents(grid);
+}
+
+function paletteHTML(p){
+  const saved=state.savedPalettes.includes(p.id);
+  return`<div class="palette-card" data-palette="${p.id}">
+    <div class="swatches">${p.colors.map(c=>`<div class="swatch" style="background:${c.hex}" data-hex="${c.hex}" data-name="${c.name}"><div class="swatch-tooltip">${c.hex}</div><div class="copied-flash" id="cf-${p.id}-${c.hex.replace('#','')}">✓</div></div>`).join("")}</div>
+    <div class="palette-body">
+      <div class="palette-header">
+        <div class="palette-name">${p.name}</div>
+        <button class="icon-btn save-palette-btn ${saved?'saved':''}" data-save-palette="${p.id}">🔖</button>
+      </div>
+      <div class="palette-desc">${p.description}</div>
+      <div class="hex-row">${p.colors.map(c=>`<span class="hex-label">${c.hex}</span>`).join("")}</div>
+      <div class="palette-tags"><span class="mood-badge">${p.mood}</span>${p.tags.map(t=>`<span class="ptag">${t}</span>`).join("")}</div>
+    </div>
+  </div>`;
+}
+
+function attachPaletteEvents(container){
+  container.querySelectorAll(".swatch").forEach(sw=>{
+    sw.addEventListener("click",()=>{
+      const hex=sw.dataset.hex, name=sw.dataset.name;
+      navigator.clipboard.writeText(hex).catch(()=>{});
+      const pid=sw.closest(".palette-card").dataset.palette;
+      const fl=document.getElementById(`cf-${pid}-${hex.replace('#','')}`);
+      if(fl){fl.style.opacity="1";setTimeout(()=>fl.style.opacity="0",900);}
+      showToast(`✅ تم نسخ ${hex} (${name})`);
+    });
+  });
+  container.querySelectorAll(".save-palette-btn").forEach(btn=>btn.addEventListener("click",()=>{toggleSavePalette(btn.dataset.savePalette);renderPalettes();renderSaved();updateSavedCount();}));
+}
+
+// --- SAVED ---
+function toggleSaveTool(id){
+  state.savedTools=state.savedTools.includes(id)?state.savedTools.filter(x=>x!==id):[...state.savedTools,id];
+  showToast(state.savedTools.includes(id)?"🔖 تمت الإضافة":"🗑️ تمت الإزالة");
+  persist();
+}
+
+function toggleSavePalette(id){
+  state.savedPalettes=state.savedPalettes.includes(id)?state.savedPalettes.filter(x=>x!==id):[...state.savedPalettes,id];
+  showToast(state.savedPalettes.includes(id)?"🔖 تمت الإضافة":"🗑️ تمت الإزالة");
+  persist();
+}
+
+function updateSavedCount(){
+  const total=state.savedTools.length+state.savedPalettes.length;
+  const b=document.getElementById("saved-count");
+  b.textContent=total; b.style.display=total>0?"inline":"none";
+}
+
+function renderSaved(){
+  const tl=document.getElementById("saved-tools-list");
+  const pl=document.getElementById("saved-palettes-list");
+  const tools=TOOLS.filter(t=>state.savedTools.includes(t.id));
+  const palettes=PALETTES.filter(p=>state.savedPalettes.includes(p.id));
+  tl.innerHTML=tools.length?tools.map(t=>toolHTML(t)).join(""):`<div class="empty-state"><div class="empty-icon">🔖</div><div class="empty-title">لا توجد أدوات محفوظة</div><div class="empty-desc">احفظ الأدوات من تبويب الأدوات</div></div>`;
+  pl.innerHTML=palettes.length?palettes.map(p=>paletteHTML(p)).join(""):`<div class="empty-state"><div class="empty-icon">🎨</div><div class="empty-title">لا توجد لوحات محفوظة</div><div class="empty-desc">احفظ اللوحات من تبويب الألوان</div></div>`;
+  tl.querySelectorAll("[data-save-tool]").forEach(btn=>btn.addEventListener("click",()=>{toggleSaveTool(btn.dataset.saveTool);renderSaved();renderTools();updateSavedCount();}));
+  if(palettes.length)attachPaletteEvents(pl);
+}
+
+// --- EVENTS ---
+document.querySelectorAll(".main-tab").forEach(tab=>{
+  tab.addEventListener("click",()=>{
+    document.querySelectorAll(".main-tab").forEach(t=>t.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById("tab-"+tab.dataset.tab).classList.add("active");
+    if(tab.dataset.tab==="saved")renderSaved();
+  });
+});
+
+document.getElementById("st-tools").addEventListener("click",()=>{
+  document.getElementById("st-tools").classList.add("active");
+  document.getElementById("st-palettes").classList.remove("active");
+  document.getElementById("saved-tools-list").style.display="";
+  document.getElementById("saved-palettes-list").style.display="none";
+});
+
+document.getElementById("st-palettes").addEventListener("click",()=>{
+  document.getElementById("st-palettes").classList.add("active");
+  document.getElementById("st-tools").classList.remove("active");
+  document.getElementById("saved-palettes-list").style.display="";
+  document.getElementById("saved-tools-list").style.display="none";
+});
+
+document.getElementById("tools-search").addEventListener("input",e=>{
+  state.toolsQuery=e.target.value;
+  document.getElementById("tools-clear").style.display=e.target.value?"block":"none";
+  renderTools();
+});
+document.getElementById("tools-clear").addEventListener("click",()=>{
+  state.toolsQuery=""; document.getElementById("tools-search").value="";
+  document.getElementById("tools-clear").style.display="none"; renderTools();
+});
+
+document.getElementById("colors-search").addEventListener("input",e=>{
+  state.colorsQuery=e.target.value;
+  document.getElementById("colors-clear").style.display=e.target.value?"block":"none";
+  renderPalettes();
+});
+document.getElementById("colors-clear").addEventListener("click",()=>{
+  state.colorsQuery=""; document.getElementById("colors-search").value="";
+  document.getElementById("colors-clear").style.display="none"; renderPalettes();
+});
+
+let isLight=false;
+document.getElementById("themeBtn").addEventListener("click",()=>{
+  isLight=!isLight;
+  document.body.classList.toggle("light",isLight);
+  document.getElementById("themeBtn").textContent=isLight?"🌙":"☀️";
+});
+
+// --- INIT ---
+renderToolFilters(); renderTools();
+renderColorFilters(); renderPalettes();
+updateSavedCount();
 </script>
-
 </body>
 </html>
