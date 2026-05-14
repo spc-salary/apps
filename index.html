@@ -3,1430 +3,729 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>مدير الإشارات المرجعية الذكي</title>
+  <title>بوابة الخدمات الإلكترونية | مديرية غاز جنوب المنطقة الوسطى</title>
+  <meta name="description" content="بوابة الخدمات الإلكترونية الموحدة - مديرية غاز جنوب المنطقة الوسطى" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
   <style>
+    /* ─── Reset & base ─────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #f4f5f9;
-      --surface: #ffffff;
-      --surface2: #f0f1f7;
-      --border: #e2e4ee;
-      --text: #1a1d2e;
-      --text-muted: #7b80a0;
-      --primary: #6c5ce7;
-      --primary-light: #ede9ff;
-      --primary-fg: #ffffff;
-      --destructive: #e53e3e;
-      --destructive-light: #fff5f5;
-      --green: #38a169;
-      --green-light: #f0fff4;
-      --orange: #d97706;
-      --orange-light: #fffbeb;
-      --shadow: 0 2px 12px rgba(0,0,0,.07);
-      --shadow-lg: 0 8px 30px rgba(0,0,0,.13);
-      --radius: 14px;
-      --radius-sm: 9px;
-      --transition: .18s ease;
+      --font: 'Cairo', 'Tajawal', system-ui, sans-serif;
+      --bg:          #f0f4ff;
+      --bg-card:     rgba(255,255,255,0.82);
+      --bg-card-hov: rgba(255,255,255,0.95);
+      --bg-header:   rgba(255,255,255,0.72);
+      --fg:          #0f172a;
+      --fg-soft:     #475569;
+      --fg-muted:    #94a3b8;
+      --border:      rgba(100,116,139,0.15);
+      --border-hov:  rgba(100,116,139,0.30);
+      --shadow-sm:   0 2px 8px rgba(15,23,42,0.06);
+      --shadow-md:   0 8px 32px rgba(15,23,42,0.10);
+      --shadow-lg:   0 20px 60px rgba(15,23,42,0.14);
+      --shadow-glow: 0 0 60px rgba(99,102,241,0.18);
+      --salary-a:   #6366f1;
+      --salary-b:   #8b5cf6;
+      --gas-a:      #0ea5e9;
+      --gas-b:      #06b6d4;
+      --radius-card: 24px;
+      --radius-icon: 18px;
+      --header-h:    72px;
+      --transition:  0.35s cubic-bezier(0.34,1.56,0.64,1);
+      --ease:        0.25s ease;
     }
-    .dark {
-      --bg: #10111a;
-      --surface: #181926;
-      --surface2: #1f2133;
-      --border: #282c42;
-      --text: #e8eaf6;
-      --text-muted: #6b7090;
-      --primary: #8b7ff0;
-      --primary-light: #1e1a3a;
-      --shadow: 0 2px 16px rgba(0,0,0,.35);
-      --shadow-lg: 0 8px 32px rgba(0,0,0,.5);
+
+    html.dark {
+      --bg:          #0b1120;
+      --bg-card:     rgba(15,23,42,0.82);
+      --bg-card-hov: rgba(20,30,55,0.95);
+      --bg-header:   rgba(8,14,30,0.78);
+      --fg:          #f1f5f9;
+      --fg-soft:     #94a3b8;
+      --fg-muted:    #475569;
+      --border:      rgba(148,163,184,0.10);
+      --border-hov:  rgba(148,163,184,0.22);
+      --shadow-sm:   0 2px 8px rgba(0,0,0,0.28);
+      --shadow-md:   0 8px 32px rgba(0,0,0,0.40);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.55);
+      --shadow-glow: 0 0 80px rgba(99,102,241,0.25);
+    }
+
+    html {
+      font-family: var(--font);
+      direction: rtl;
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
     }
 
     body {
-      font-family: 'Segoe UI', 'Tahoma', system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      transition: background var(--transition), color var(--transition);
+      background-color: var(--bg);
+      color: var(--fg);
+      min-height: 100dvh;
+      overflow-x: hidden;
+      transition: background-color 0.4s ease, color 0.4s ease;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ======================== LAYOUT ======================== */
-    .app { display: flex; min-height: 100vh; }
-
-    /* SIDEBAR */
-    .sidebar {
-      width: 240px; flex-shrink: 0;
-      background: var(--surface);
-      border-left: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      position: sticky; top: 0; height: 100vh;
-      overflow-y: auto;
-    }
-    .sidebar-header {
-      padding: 18px 16px 14px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .logo { display: flex; align-items: center; gap: 9px; }
-    .logo-icon {
-      width: 34px; height: 34px;
-      background: var(--primary);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 16px;
-      box-shadow: 0 3px 10px rgba(108,92,231,.3);
-      flex-shrink: 0;
-    }
-    .logo-text { font-size: 13px; font-weight: 700; line-height: 1.3; }
-    .logo-sub { font-size: 10px; color: var(--text-muted); }
-
-    .sidebar-section { padding: 12px 10px 6px; }
-    .sidebar-section-title {
-      font-size: 10px; font-weight: 700;
-      color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: .06em; padding: 0 6px; margin-bottom: 4px;
-    }
-
-    .cat-item {
-      display: flex; align-items: center; gap: 9px;
-      padding: 8px 10px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all var(--transition);
+    /* ─── App root ──────────────────────────────────── */
+    .app-root {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
       position: relative;
-      user-select: none;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
-    .cat-item:hover { background: var(--surface2); }
-    .cat-item.active { background: var(--primary-light); color: var(--primary); }
-    .cat-item.active .cat-count { background: var(--primary); color: #fff; }
-    .cat-emoji { font-size: 15px; flex-shrink: 0; width: 20px; text-align: center; }
-    .cat-name { flex: 1; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .cat-count {
-      font-size: 10px; font-weight: 700;
-      background: var(--surface2);
-      color: var(--text-muted);
-      padding: 1px 6px; border-radius: 20px; min-width: 20px; text-align: center;
+    .app-root.app-loaded {
+      opacity: 1;
+      transform: translateY(0);
     }
-    .cat-del {
-      display: none; width: 18px; height: 18px;
-      background: none; border: none; cursor: pointer;
-      color: var(--text-muted); font-size: 12px; border-radius: 4px;
-      align-items: center; justify-content: center;
-      transition: all var(--transition);
-    }
-    .cat-item:hover .cat-del { display: flex; }
-    .cat-del:hover { background: var(--destructive-light); color: var(--destructive); }
 
-    .add-cat-btn {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 10px;
-      border-radius: var(--radius-sm);
-      cursor: pointer; color: var(--text-muted);
-      font-size: 12px; font-weight: 500;
-      transition: all var(--transition);
-      border: 1.5px dashed var(--border);
-      margin: 6px 0;
+    /* ─── Background blobs ──────────────────────────── */
+    .bg-blobs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
     }
-    .add-cat-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.45;
+      animation: blobFloat 12s ease-in-out infinite;
+      will-change: transform;
+    }
+    html.dark .blob { opacity: 0.30; }
 
-    /* Add category inline form */
-    .add-cat-form {
-      background: var(--surface2);
-      border: 1.5px solid var(--primary);
-      border-radius: var(--radius-sm);
-      padding: 10px;
-      margin: 4px 0 8px;
-      display: none;
+    .blob-1 {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, #818cf8 0%, #6366f1 60%, transparent 100%);
+      top: -160px; right: -120px;
+      animation-delay: 0s;
     }
-    .add-cat-form.visible { display: block; }
-    .emoji-row {
-      display: flex; flex-wrap: wrap; gap: 4px;
-      margin-bottom: 8px;
+    .blob-2 {
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, #38bdf8 0%, #0ea5e9 60%, transparent 100%);
+      bottom: -100px; left: -80px;
+      animation-delay: -5s;
     }
-    .emoji-btn {
-      width: 30px; height: 30px;
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: 7px; cursor: pointer; font-size: 14px;
-      display: flex; align-items: center; justify-content: center;
-      transition: all var(--transition);
+    .blob-3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, #a78bfa 0%, #8b5cf6 60%, transparent 100%);
+      top: 50%; left: 40%;
+      animation-delay: -9s;
     }
-    .emoji-btn:hover, .emoji-btn.selected { border-color: var(--primary); background: var(--primary-light); }
-    .cat-name-inp {
-      width: 100%;
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: 7px;
-      padding: 7px 10px;
-      font-size: 12px; color: var(--text);
-      outline: none; font-family: inherit;
-      direction: rtl;
-      margin-bottom: 8px;
-    }
-    .cat-name-inp:focus { border-color: var(--primary); }
-    .cat-form-btns { display: flex; gap: 6px; }
-    .btn-cat-save, .btn-cat-cancel {
-      flex: 1; padding: 6px; border-radius: 7px;
-      border: none; cursor: pointer; font-size: 12px; font-weight: 600;
-      font-family: inherit; transition: all var(--transition);
-    }
-    .btn-cat-save { background: var(--primary); color: #fff; }
-    .btn-cat-save:hover { opacity: .88; }
-    .btn-cat-cancel { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); }
-    .btn-cat-cancel:hover { color: var(--text); }
 
-    /* Sidebar footer */
-    .sidebar-footer {
-      margin-top: auto;
-      padding: 12px 10px;
-      border-top: 1px solid var(--border);
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%       { transform: translate(18px, -22px) scale(1.04); }
+      66%       { transform: translate(-14px, 14px) scale(0.97); }
     }
-    .stats-row { display: flex; gap: 8px; }
-    .stat-box {
-      flex: 1; background: var(--primary-light);
-      border-radius: 10px; padding: 10px 8px;
-      text-align: center;
-    }
-    .stat-num { font-size: 18px; font-weight: 800; color: var(--primary); }
-    .stat-label { font-size: 9px; color: var(--text-muted); margin-top: 1px; }
 
-    /* MAIN */
-    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-
-    /* Top bar */
-    .topbar {
-      background: var(--surface);
+    /* ─── Header ────────────────────────────────────── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--header-h);
+      background: var(--bg-header);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
       border-bottom: 1px solid var(--border);
-      padding: 14px 20px;
-      display: flex; align-items: center; gap: 12px;
-      position: sticky; top: 0; z-index: 10;
+      transition: background 0.4s ease, border-color 0.4s ease;
     }
-    .topbar-title { font-size: 15px; font-weight: 700; flex-shrink: 0; }
-    .topbar-title span { color: var(--primary); }
-    .search-wrap { flex: 1; position: relative; }
-    .search-icon {
-      position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
-      color: var(--text-muted); pointer-events: none; font-size: 13px;
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
     }
-    .search-input {
-      width: 100%;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 8px 34px 8px 32px;
-      font-size: 13px; color: var(--text);
-      outline: none; direction: rtl;
-      transition: border-color var(--transition), box-shadow var(--transition);
-      font-family: inherit;
-    }
-    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,92,231,.1); }
-    .search-clear-btn {
-      position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; cursor: pointer; color: var(--text-muted);
-      font-size: 12px; display: none;
-    }
-    .search-clear-btn.vis { display: block; }
-    .topbar-actions { display: flex; gap: 7px; flex-shrink: 0; }
-    .btn-icon {
-      width: 36px; height: 36px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      color: var(--text-muted); font-size: 15px;
-      transition: all var(--transition);
-    }
-    .btn-icon:hover { color: var(--text); background: var(--border); }
-
-    /* Content area */
-    .content { flex: 1; display: flex; gap: 0; min-width: 0; }
-
-    /* Bookmarks area */
-    .bookmarks-area { flex: 1; padding: 20px; min-width: 0; }
-    .area-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 14px;
-    }
-    .area-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
-    .area-title .emo { font-size: 16px; }
-    .area-count {
-      font-size: 11px; font-weight: 600;
-      background: var(--surface2); color: var(--text-muted);
-      padding: 2px 8px; border-radius: 20px;
-    }
-
-    .bookmarks-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    .header-logo {
+      display: flex;
+      align-items: center;
       gap: 12px;
     }
-
-    .bookmark-card {
-      background: var(--surface);
+    .logo-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--salary-a), var(--salary-b));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+    }
+    .logo-icon svg { width: 20px; height: 20px; }
+    .logo-title {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--fg);
+    }
+    .logo-sub {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--fg-soft);
+      line-height: 1.2;
+    }
+    .dark-toggle {
+      width: 42px; height: 42px;
+      border-radius: 50%;
       border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      transition: all var(--transition);
-      animation: fadeUp .25s ease both;
-      cursor: default;
-    }
-    .bookmark-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
-    .bm-top { display: flex; align-items: flex-start; gap: 10px; }
-    .bm-favicon {
-      width: 36px; height: 36px; flex-shrink: 0;
-      background: var(--surface2); border-radius: 9px;
+      background: var(--bg-card);
+      color: var(--fg);
       display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 700; color: var(--text-muted); overflow: hidden;
+      cursor: pointer;
+      transition: background var(--ease), border-color var(--ease), transform var(--ease), box-shadow var(--ease);
+      flex-shrink: 0;
     }
-    .bm-favicon img { width: 20px; height: 20px; object-fit: contain; }
-    .bm-info { flex: 1; min-width: 0; }
-    .bm-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .bm-url { font-size: 11px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; direction: ltr; text-align: right; }
-    .bm-cat {
-      display: inline-flex; align-items: center; gap: 3px;
-      margin-top: 5px; font-size: 10px; font-weight: 600;
-      padding: 2px 7px; border-radius: 20px;
-      background: var(--primary-light); color: var(--primary);
+    .dark-toggle svg { width: 18px; height: 18px; }
+    .dark-toggle:hover {
+      background: var(--bg-card-hov);
+      border-color: var(--border-hov);
+      transform: scale(1.08);
+      box-shadow: var(--shadow-sm);
     }
-    .bm-actions {
-      display: flex; gap: 3px;
-      opacity: 0; transition: opacity var(--transition);
-    }
-    .bookmark-card:hover .bm-actions { opacity: 1; }
-    .bm-btn {
-      width: 26px; height: 26px;
-      background: none; border: none; border-radius: 7px;
-      cursor: pointer; font-size: 12px;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--text-muted); transition: all var(--transition);
-    }
-    .bm-btn:hover { background: var(--surface2); color: var(--text); }
-    .bm-btn.del:hover { background: var(--destructive-light); color: var(--destructive); }
-    .bm-time { font-size: 10px; color: var(--text-muted); margin-top: 10px; }
+    .dark-toggle:active { transform: scale(0.95); }
 
-    /* Empty */
-    .empty { grid-column: 1/-1; text-align: center; padding: 60px 20px; }
-    .empty-icon { font-size: 38px; margin-bottom: 12px; }
-    .empty h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
-    .empty p { font-size: 13px; color: var(--text-muted); max-width: 280px; margin: 0 auto; line-height: 1.6; }
-
-    /* RIGHT PANEL */
-    .right-panel {
-      width: 280px; flex-shrink: 0;
-      border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      max-height: calc(100vh - 65px);
-      overflow-y: auto;
-      position: sticky; top: 65px;
+    /* ─── Main ──────────────────────────────────────── */
+    .site-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 64px 20px 80px;
+      position: relative;
+      z-index: 1;
+      gap: 48px;
     }
 
-    /* Add form */
-    .add-form-section { padding: 16px; border-bottom: 1px solid var(--border); }
-    .section-hdr {
-      display: flex; align-items: center; gap: 7px;
-      margin-bottom: 12px;
+    /* ─── Hero ──────────────────────────────────────── */
+    .hero-section {
+      text-align: center;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      animation: slideUp 0.7s 0.2s both;
     }
-    .section-hdr-icon {
-      width: 24px; height: 24px; background: var(--primary-light);
-      border-radius: 7px; display: flex; align-items: center; justify-content: center;
-      font-size: 12px; color: var(--primary);
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 100px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      font-size: 0.80rem;
+      font-weight: 600;
+      color: var(--fg-soft);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-sm);
     }
-    .section-hdr h3 { font-size: 13px; font-weight: 600; }
+    .badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34,197,94,0.6);
+      animation: pulse 2s ease infinite;
+      display: inline-block;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.85); }
+    }
+    .hero-title {
+      font-size: clamp(1.9rem, 5vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.3;
+      color: var(--fg);
+      letter-spacing: -0.5px;
+    }
+    .hero-accent {
+      background: linear-gradient(135deg, var(--salary-a), var(--gas-a));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--fg-soft);
+      line-height: 1.8;
+      max-width: 480px;
+    }
 
-    .form-group { margin-bottom: 10px; }
-    .form-label {
-      font-size: 10px; font-weight: 700; color: var(--text-muted);
-      display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em;
-    }
-    .inp-wrap { position: relative; }
-    .form-inp {
+    /* ─── Cards ─────────────────────────────────────── */
+    .cards-section {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
       width: 100%;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 9px 13px;
-      font-size: 12px; color: var(--text); outline: none;
-      transition: border-color var(--transition), box-shadow var(--transition);
-      font-family: inherit;
-      direction: ltr; text-align: right;
+      max-width: 800px;
     }
-    .form-inp.rtl { direction: rtl; text-align: right; }
-    .form-inp::placeholder { color: var(--text-muted); }
-    .form-inp:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,92,231,.12); }
-    .form-inp.err { border-color: var(--destructive); }
-    .fetch-ico {
-      position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
+
+    .service-card {
+      position: relative;
+      display: block;
+      text-decoration: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      transition:
+        transform var(--transition),
+        box-shadow var(--ease),
+        border-color var(--ease),
+        background var(--ease);
+      cursor: pointer;
+      animation: cardEnter 0.7s both;
+    }
+    .card-delay-0 { animation-delay: 0.35s; }
+    .card-delay-1 { animation-delay: 0.50s; }
+
+    .service-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      border-color: var(--border-hov);
+      background: var(--bg-card-hov);
+    }
+    .service-card:active {
+      transform: translateY(-4px) scale(1.01);
+    }
+
+    @keyframes cardEnter {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .card-glow {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      border-radius: inherit;
       pointer-events: none;
     }
-    .form-inp.loading { padding-left: 30px; }
-    .fetch-msg { font-size: 10px; margin-top: 3px; }
-    .fetch-ok { color: var(--green); }
-    .fetch-fail { color: var(--orange); }
-    .form-err { font-size: 10px; color: var(--destructive); margin-top: 3px; }
-
-    /* Category selector */
-    .cat-select-wrap { position: relative; }
-    .cat-select {
-      width: 100%;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 9px 13px;
-      font-size: 12px; color: var(--text); outline: none;
-      transition: border-color var(--transition), box-shadow var(--transition);
-      font-family: inherit;
-      cursor: pointer;
-      appearance: none;
-      direction: rtl;
+    .salary-gradient.card-glow {
+      background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08));
     }
-    .cat-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,92,231,.12); }
-    .select-arrow {
-      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-      pointer-events: none; font-size: 10px; color: var(--text-muted);
+    .gas-gradient.card-glow {
+      background: linear-gradient(135deg, rgba(14,165,233,0.12), rgba(6,182,212,0.08));
+    }
+    .service-card:hover .card-glow { opacity: 1; }
+
+    .card-inner {
+      position: relative;
+      padding: 36px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 1;
     }
 
-    .btn-submit {
-      width: 100%;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      background: var(--primary); color: #fff;
-      border: none; border-radius: var(--radius-sm);
-      padding: 10px; font-size: 12px; font-weight: 700;
-      cursor: pointer; font-family: inherit;
-      transition: all var(--transition); margin-top: 4px;
-    }
-    .btn-submit:hover { opacity: .88; transform: translateY(-1px); }
-    .btn-submit:active { transform: scale(.98); }
-    .btn-submit:disabled { opacity: .55; cursor: not-allowed; transform: none; }
-
-    /* Suggestions */
-    .suggestions-section { flex: 1; padding: 0; }
-    .sug-hdr {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      background: linear-gradient(135deg, rgba(108,92,231,.05), transparent);
-    }
-    .sug-hdr-left { display: flex; align-items: center; gap: 7px; }
-    .sug-hdr-icon {
-      width: 24px; height: 24px; background: var(--primary-light);
-      border-radius: 7px; display: flex; align-items: center; justify-content: center;
-      font-size: 11px;
-    }
-    .sug-hdr h3 { font-size: 12px; font-weight: 600; }
-    .sug-hdr p { font-size: 10px; color: var(--text-muted); }
-    .btn-sug-close {
-      width: 22px; height: 22px; background: none; border: none;
-      cursor: pointer; color: var(--text-muted); border-radius: 6px;
-      font-size: 12px; display: flex; align-items: center; justify-content: center;
-    }
-    .btn-sug-close:hover { background: var(--surface2); color: var(--text); }
-
-    .sug-item {
-      display: flex; align-items: center; gap: 9px;
-      padding: 9px 14px;
-      border-bottom: 1px solid var(--border);
-      transition: background var(--transition);
-    }
-    .sug-item:last-of-type { border-bottom: none; }
-    .sug-item:hover { background: var(--surface2); }
-    .sug-fav {
-      width: 30px; height: 30px; flex-shrink: 0;
-      background: var(--surface2); border-radius: 8px;
+    .card-icon-wrap {
+      width: 68px; height: 68px;
+      border-radius: var(--radius-icon);
       display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; color: var(--text-muted); overflow: hidden;
-    }
-    .sug-fav img { width: 17px; height: 17px; object-fit: contain; }
-    .sug-info { flex: 1; min-width: 0; }
-    .sug-name { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .sug-desc { font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .btn-add-sug {
+      color: #fff;
       flex-shrink: 0;
-      display: flex; align-items: center; gap: 3px;
-      padding: 4px 9px; border-radius: 7px; border: none; cursor: pointer;
-      font-size: 10px; font-weight: 700;
-      background: var(--primary); color: #fff;
-      transition: all var(--transition); font-family: inherit;
+      transition: transform var(--transition);
     }
-    .btn-add-sug:hover { opacity: .85; }
-    .btn-add-sug.added { background: var(--green-light); color: var(--green); }
+    .salary-gradient.card-icon-wrap {
+      background: linear-gradient(135deg, var(--salary-a), var(--salary-b));
+      box-shadow: 0 8px 24px rgba(99,102,241,0.40);
+    }
+    .gas-gradient.card-icon-wrap {
+      background: linear-gradient(135deg, var(--gas-a), var(--gas-b));
+      box-shadow: 0 8px 24px rgba(14,165,233,0.40);
+    }
+    .card-icon-wrap svg { width: 32px; height: 32px; }
+    .service-card:hover .card-icon-wrap { transform: scale(1.12) rotate(-3deg); }
 
-    .sug-placeholder {
-      padding: 24px 16px; text-align: center;
-      color: var(--text-muted); font-size: 12px; line-height: 1.7;
-    }
-    .sug-placeholder .phi { font-size: 24px; margin-bottom: 8px; opacity: .4; }
-    .sug-footer { padding: 8px 14px; font-size: 9px; color: var(--text-muted); text-align: center; border-top: 1px solid var(--border); background: var(--surface2); }
+    .card-body { display: flex; flex-direction: column; gap: 6px; }
 
-    /* Skeleton */
-    .skeleton {
-      background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
-      background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px;
+    .card-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 100px;
+      width: fit-content;
     }
-    .sk-row { display: flex; align-items: center; gap: 9px; padding: 9px 14px; border-bottom: 1px solid var(--border); }
-    .sk-c { width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; }
-    .sk-l { flex: 1; }
-    .sk-ln { height: 9px; margin-bottom: 4px; }
-    .sk-b { width: 48px; height: 24px; border-radius: 7px; flex-shrink: 0; }
-
-    /* Spinner */
-    .spin {
-      width: 14px; height: 14px;
-      border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
-      border-radius: 50%; animation: rot .7s linear infinite; display: inline-block;
+    .card-delay-0 .card-badge {
+      background: rgba(99,102,241,0.12);
+      color: var(--salary-a);
     }
-    .spin-sm {
-      width: 12px; height: 12px;
-      border: 2px solid rgba(108,92,231,.25); border-top-color: var(--primary);
-      border-radius: 50%; animation: rot .7s linear infinite; display: inline-block;
+    .card-delay-1 .card-badge {
+      background: rgba(14,165,233,0.12);
+      color: var(--gas-a);
     }
 
-    /* Toast */
-    #toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-      background: var(--text); color: var(--bg);
-      padding: 8px 18px; border-radius: 30px; font-size: 12px; font-weight: 600;
-      box-shadow: 0 4px 20px rgba(0,0,0,.18);
-      transition: transform .3s ease, opacity .3s ease; opacity: 0; z-index: 999;
+    .card-title {
+      font-size: clamp(1.0rem, 2.5vw, 1.25rem);
+      font-weight: 700;
+      color: var(--fg);
+      line-height: 1.4;
     }
-    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-    /* Animations */
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
-    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-    @keyframes rot { to { transform: rotate(360deg); } }
-
-    /* Mobile */
-    @media (max-width: 900px) {
-      .right-panel { width: 240px; }
-    }
-    @media (max-width: 700px) {
-      .app { flex-direction: column; }
-      .sidebar { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; overflow: visible; border-left: none; border-bottom: 1px solid var(--border); }
-      .sidebar-header { border-bottom: none; }
-      .sidebar-section { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; }
-      .cat-item { padding: 5px 9px; font-size: 12px; }
-      .cat-del { display: none !important; }
-      .sidebar-footer { display: none; }
-      .right-panel { width: 100%; position: static; max-height: none; border-right: none; border-top: 1px solid var(--border); }
-      .content { flex-direction: column-reverse; }
+    .card-subtitle {
+      font-size: 0.88rem;
+      color: var(--fg-soft);
+      line-height: 1.6;
     }
 
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    .card-arrow {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--fg-soft);
+      margin-top: 4px;
+      transition: transform var(--transition), background var(--ease), border-color var(--ease), color var(--ease);
+    }
+    .card-arrow svg { width: 18px; height: 18px; }
+    .service-card:hover .card-arrow {
+      transform: translateX(-6px);
+      border-color: transparent;
+    }
+    .card-delay-0:hover .card-arrow { background: var(--salary-a); color: #fff; }
+    .card-delay-1:hover .card-arrow { background: var(--gas-a); color: #fff; }
+
+    /* ─── Info strip ─────────────────────────────────── */
+    .info-strip {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 18px 32px;
+      border-radius: 100px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-sm);
+      animation: slideUp 0.7s 0.65s both;
+    }
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--fg-soft);
+      white-space: nowrap;
+    }
+    .info-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--salary-a), var(--salary-b));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .info-icon svg { width: 15px; height: 15px; }
+    .info-sep { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
+
+    /* ─── Footer ─────────────────────────────────────── */
+    .site-footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      background: var(--bg-header);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 24px 20px;
+    }
+    .footer-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .footer-copy, .footer-dev {
+      font-size: 0.82rem;
+      color: var(--fg-muted);
+      line-height: 1.5;
+    }
+    .footer-dev strong { color: var(--fg-soft); font-weight: 700; }
+
+    /* ─── Animations ─────────────────────────────────── */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Responsive ─────────────────────────────────── */
+    @media (max-width: 640px) {
+      :root { --header-h: 64px; }
+      .site-main { padding: 40px 16px 60px; gap: 36px; }
+      .header-inner { padding: 0 16px; }
+      .logo-title  { font-size: 0.82rem; }
+      .logo-sub    { font-size: 0.66rem; }
+      .hero-section { gap: 16px; }
+      .hero-desc { font-size: 0.95rem; }
+      .cards-section { grid-template-columns: 1fr; gap: 16px; max-width: 420px; }
+      .card-inner { padding: 28px 22px; gap: 16px; }
+      .card-icon-wrap { width: 60px; height: 60px; border-radius: 16px; }
+      .card-icon-wrap svg { width: 27px; height: 27px; }
+      .info-strip { flex-direction: column; border-radius: 20px; padding: 20px 24px; gap: 14px; }
+      .info-sep { width: 80px; height: 1px; }
+      .footer-inner { justify-content: center; text-align: center; }
+    }
+    @media (max-width: 420px) {
+      .logo-sub { display: none; }
+      .info-strip { width: 100%; }
+    }
+    @media (min-width: 641px) and (max-width: 900px) {
+      .cards-section { gap: 16px; }
+      .card-inner { padding: 30px 22px; }
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--salary-a);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
 
-<div class="app">
+<div class="app-root" id="appRoot">
 
-  <!-- ========== SIDEBAR: CATEGORIES ========== -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="logo">
-        <div class="logo-icon">🔖</div>
-        <div>
-          <div class="logo-text">الإشارات الذكية</div>
-          <div class="logo-sub">AI-Powered Bookmarks</div>
-        </div>
-      </div>
-      <button class="btn-icon" id="btn-theme" onclick="toggleTheme()" title="الوضع الليلي" style="width:30px;height:30px;font-size:13px;">🌙</button>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-section-title">المجلدات</div>
-
-      <!-- All -->
-      <div class="cat-item active" id="cat-all" onclick="selectCat('__all__')">
-        <span class="cat-emoji">📚</span>
-        <span class="cat-name">جميع الإشارات</span>
-        <span class="cat-count" id="count-all">٠</span>
-      </div>
-
-      <!-- Dynamic categories -->
-      <div id="cats-list"></div>
-
-      <!-- Add category button -->
-      <div class="add-cat-btn" onclick="toggleAddCatForm()">
-        <span>＋</span> إضافة تصنيف جديد
-      </div>
-
-      <!-- Inline add form -->
-      <div class="add-cat-form" id="add-cat-form">
-        <div class="emoji-row" id="emoji-row"></div>
-        <input class="cat-name-inp" id="new-cat-name" type="text" placeholder="اسم التصنيف..." maxlength="30" />
-        <div class="cat-form-btns">
-          <button class="btn-cat-save" onclick="saveNewCat()">حفظ</button>
-          <button class="btn-cat-cancel" onclick="toggleAddCatForm()">إلغاء</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="stats-row">
-        <div class="stat-box">
-          <div class="stat-num" id="stat-total">٠</div>
-          <div class="stat-label">إشارة</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num" id="stat-cats">٠</div>
-          <div class="stat-label">تصنيف</div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- ========== MAIN AREA ========== -->
-  <div class="main">
-
-    <!-- Top bar -->
-    <div class="topbar">
-      <div class="topbar-title" id="topbar-title">جميع الإشارات</div>
-      <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input id="search-input" class="search-input" type="search"
-          placeholder="ابحث في إشاراتك..."
-          oninput="handleSearch()" />
-        <button class="search-clear-btn" id="search-clear" onclick="clearSearch()">✕</button>
-      </div>
-      <div class="topbar-actions">
-        <button class="btn-icon" title="مسح الكل" onclick="clearAll()" id="btn-clear-all" style="display:none">🗑</button>
-      </div>
-    </div>
-
-    <div class="content">
-      <!-- Bookmarks -->
-      <div class="bookmarks-area">
-        <div class="area-header">
-          <div class="area-title">
-            <span class="emo" id="area-emo">📚</span>
-            <span id="area-name">جميع الإشارات</span>
-          </div>
-          <span class="area-count" id="area-count">٠</span>
-        </div>
-        <div class="bookmarks-grid" id="bookmarks-grid"></div>
-      </div>
-
-      <!-- Right panel: Add form + Suggestions -->
-      <div class="right-panel">
-        <!-- Add form -->
-        <div class="add-form-section">
-          <div class="section-hdr">
-            <div class="section-hdr-icon">✨</div>
-            <h3>إضافة إشارة مرجعية</h3>
-          </div>
-          <form id="add-form" onsubmit="handleAdd(event)">
-            <div class="form-group">
-              <label class="form-label">🔗 رابط الموقع</label>
-              <div class="inp-wrap">
-                <input id="inp-url" class="form-inp" type="text"
-                  placeholder="https://example.com"
-                  autocomplete="off"
-                  oninput="onUrlInput()"
-                  onblur="onUrlBlur()" />
-                <span class="fetch-ico" id="fetch-ico"></span>
-              </div>
-              <div class="fetch-msg" id="fetch-msg"></div>
-              <div class="form-err" id="err-url"></div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">🏷 اسم الموقع</label>
-              <input id="inp-name" class="form-inp rtl" type="text" placeholder="موقعي المفضل" autocomplete="off" />
-              <div class="form-err" id="err-name"></div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">📁 التصنيف</label>
-              <div class="cat-select-wrap">
-                <select id="inp-cat" class="cat-select">
-                  <option value="">— بدون تصنيف —</option>
-                </select>
-                <span class="select-arrow">▾</span>
-              </div>
-            </div>
-
-            <button type="submit" class="btn-submit" id="btn-submit">
-              <span>+</span> إضافة الإشارة
-            </button>
-          </form>
-        </div>
-
-        <!-- Suggestions -->
-        <div class="suggestions-section" id="suggestions-section">
-          <div class="sug-placeholder">
-            <div class="phi">✨</div>
-            أضف إشارة لترى اقتراحات المواقع المشابهة
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- خلفية متحركة -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
   </div>
-</div>
 
-<div id="toast"></div>
+  <!-- الهيدر -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <div class="logo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div>
+          <span class="logo-title">مديرية غاز جنوب المنطقة الوسطى</span>
+          <span class="logo-sub">بوابة الخدمات الإلكترونية</span>
+        </div>
+      </div>
+      <button class="dark-toggle" id="darkToggle" aria-label="تبديل الوضع الداكن">
+        <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- المحتوى الرئيسي -->
+  <main class="site-main">
+
+    <!-- Hero -->
+    <section class="hero-section">
+      <div class="hero-badge">
+        <span class="badge-dot" aria-hidden="true"></span>
+        النظام الإلكتروني الموحد
+      </div>
+      <h1 class="hero-title">
+        مرحباً بكم في بوابة<br />
+        <span class="hero-accent">الخدمات الإلكترونية</span>
+      </h1>
+      <p class="hero-desc">
+        اختر الخدمة المطلوبة للوصول السريع إلى معلوماتك وبياناتك بكل سهولة وأمان
+      </p>
+    </section>
+
+    <!-- البطاقات -->
+    <section class="cards-section">
+
+      <!-- بطاقة الرواتب -->
+      <a href="https://spc-salary.github.io/salary/" target="_blank" rel="noopener noreferrer"
+         class="service-card card-delay-0" aria-label="الانتقال إلى الاستعلام عن الرواتب">
+        <div class="card-glow salary-gradient"></div>
+        <div class="card-inner">
+          <div class="card-icon-wrap salary-gradient">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              <line x1="12" y1="12" x2="12" y2="16"/>
+              <line x1="10" y1="14" x2="14" y2="14"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <span class="card-badge">خدمة إلكترونية</span>
+            <h2 class="card-title">الاستعلام عن الرواتب</h2>
+            <p class="card-subtitle">تحقق من راتبك وبياناتك المالية</p>
+          </div>
+          <div class="card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"/>
+              <polyline points="12 19 5 12 12 5"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- بطاقة الغاز -->
+      <a href="https://spc-salary.github.io/gaz/" target="_blank" rel="noopener noreferrer"
+         class="service-card card-delay-1" aria-label="الانتقال إلى الاستعلام ونقل جرة الغاز">
+        <div class="card-glow gas-gradient"></div>
+        <div class="card-inner">
+          <div class="card-icon-wrap gas-gradient">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C8.5 2 6 4.5 6 8c0 2.5 1.5 4.5 3 6l1 2h4l1-2c1.5-1.5 3-3.5 3-6 0-3.5-2.5-6-6-6z"/>
+              <path d="M9 16v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-2"/>
+              <line x1="12" y1="6" x2="12" y2="10"/>
+              <line x1="10" y1="8" x2="14" y2="8"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <span class="card-badge">خدمة حكومية</span>
+            <h2 class="card-title">الاستعلام ونقل جرة الغاز</h2>
+            <p class="card-subtitle">استعلم عن حصتك وانقل جرة الغاز بسهولة</p>
+          </div>
+          <div class="card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"/>
+              <polyline points="12 19 5 12 12 5"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+    </section>
+
+    <!-- شريط المعلومات -->
+    <section class="info-strip">
+      <div class="info-item">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <span>آمن ومحمي</span>
+      </div>
+      <div class="info-sep" aria-hidden="true"></div>
+      <div class="info-item">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <span>متاح على مدار الساعة</span>
+      </div>
+      <div class="info-sep" aria-hidden="true"></div>
+      <div class="info-item">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+            <line x1="12" y1="18" x2="12.01" y2="18"/>
+          </svg>
+        </div>
+        <span>متوافق مع الهاتف</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- الفوتر -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-copy" id="footerYear"></p>
+      <p class="footer-dev">تطوير وتصميم:&nbsp;<strong>William Alhasan</strong></p>
+    </div>
+  </footer>
+
+</div><!-- /.app-root -->
 
 <script>
-// ================================================================
-// CONSTANTS
-// ================================================================
-const BM_KEY   = 'sbm-bookmarks-v2';
-const CAT_KEY  = 'sbm-categories-v2';
-const THEME_KEY = 'sbm-theme';
+  /* ── Dark mode ────────────────────────────────────── */
+  const html        = document.documentElement;
+  const toggle      = document.getElementById('darkToggle');
+  const iconMoon    = document.getElementById('iconMoon');
+  const iconSun     = document.getElementById('iconSun');
 
-const DEFAULT_CATS = [
-  { id: 'ai',       emoji: '🤖', name: 'ذكاء اصطناعي' },
-  { id: 'movies',   emoji: '🎬', name: 'أفلام ومسلسلات' },
-  { id: 'news',     emoji: '📰', name: 'أخبار' },
-  { id: 'dev',      emoji: '💻', name: 'برمجة وتقنية' },
-  { id: 'edu',      emoji: '🎓', name: 'تعليم' },
-  { id: 'shop',     emoji: '🛒', name: 'تسوق' },
-  { id: 'music',    emoji: '🎵', name: 'موسيقى' },
-  { id: 'games',    emoji: '🎮', name: 'ألعاب' },
-  { id: 'design',   emoji: '🎨', name: 'تصميم وصور' },
-  { id: 'social',   emoji: '📱', name: 'تواصل اجتماعي' },
-  { id: 'reading',  emoji: '📖', name: 'قراءة ومراجع' },
-  { id: 'tools',    emoji: '🔧', name: 'أدوات وإنتاجية' },
-  { id: 'sports',   emoji: '⚽', name: 'رياضة' },
-  { id: 'travel',   emoji: '✈️', name: 'سفر وسياحة' },
-  { id: 'finance',  emoji: '💰', name: 'مال وأعمال' },
-];
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  let dark = localStorage.getItem('darkMode') === 'true' ||
+             (localStorage.getItem('darkMode') === null && prefersDark);
 
-const EMOJI_CHOICES = ['📁','⭐','🔖','🌐','🏠','🎯','💡','📌','🚀','🔥','💎','🎁','📦','🛠','🧩','🎪','🌟','💫','🎭','📊','🎤','🍕','🌍','🏆','🔑'];
-
-// ================================================================
-// STORAGE
-// ================================================================
-function loadBookmarks() {
-  try { return JSON.parse(localStorage.getItem(BM_KEY) || '[]'); } catch { return []; }
-}
-function saveBookmarks(list) { localStorage.setItem(BM_KEY, JSON.stringify(list)); }
-function addBookmarkItem(bm) {
-  const list = loadBookmarks();
-  const item = { ...bm, id: crypto.randomUUID(), addedAt: Date.now() };
-  saveBookmarks([item, ...list]);
-  return item;
-}
-function deleteBookmarkItem(id) { saveBookmarks(loadBookmarks().filter(b => b.id !== id)); }
-
-function loadCategories() {
-  try {
-    const stored = localStorage.getItem(CAT_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch {}
-  localStorage.setItem(CAT_KEY, JSON.stringify(DEFAULT_CATS));
-  return DEFAULT_CATS;
-}
-function saveCategories(list) { localStorage.setItem(CAT_KEY, JSON.stringify(list)); }
-function addCategory(cat) {
-  const list = loadCategories();
-  list.push(cat);
-  saveCategories(list);
-}
-function deleteCategory(id) { saveCategories(loadCategories().filter(c => c.id !== id)); }
-
-function getFavicon(url) {
-  try { return `https://www.google.com/s2/favicons?domain=${new URL(normalizeUrl(url)).hostname}&sz=32`; }
-  catch { return ''; }
-}
-function normalizeUrl(u) {
-  if (!u) return '';
-  return (u.startsWith('http://') || u.startsWith('https://')) ? u : 'https://' + u;
-}
-
-// ================================================================
-// THEME
-// ================================================================
-let currentTheme = localStorage.getItem(THEME_KEY) ||
-  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-function applyTheme() {
-  document.documentElement.classList.toggle('dark', currentTheme === 'dark');
-  document.getElementById('btn-theme').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
-}
-function toggleTheme() {
-  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  localStorage.setItem(THEME_KEY, currentTheme);
-  applyTheme();
-}
-applyTheme();
-
-// ================================================================
-// CATEGORY MANAGEMENT UI
-// ================================================================
-let selectedCat = '__all__';
-let selectedEmoji = '📁';
-let catFormVisible = false;
-
-function buildEmojiRow() {
-  const row = document.getElementById('emoji-row');
-  row.innerHTML = EMOJI_CHOICES.map(e =>
-    `<button type="button" class="emoji-btn${e === selectedEmoji ? ' selected' : ''}"
-      onclick="pickEmoji('${e}',this)">${e}</button>`
-  ).join('');
-}
-
-function pickEmoji(e, btn) {
-  selectedEmoji = e;
-  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-}
-
-function toggleAddCatForm() {
-  catFormVisible = !catFormVisible;
-  const form = document.getElementById('add-cat-form');
-  form.classList.toggle('visible', catFormVisible);
-  if (catFormVisible) {
-    selectedEmoji = '📁';
-    buildEmojiRow();
-    document.getElementById('new-cat-name').value = '';
-    document.getElementById('new-cat-name').focus();
+  function applyDark(val) {
+    dark = val;
+    html.classList.toggle('dark', dark);
+    iconMoon.style.display = dark ? 'none'  : '';
+    iconSun.style.display  = dark ? ''      : 'none';
+    localStorage.setItem('darkMode', String(dark));
   }
-}
 
-function saveNewCat() {
-  const name = document.getElementById('new-cat-name').value.trim();
-  if (!name) { document.getElementById('new-cat-name').focus(); return; }
-  const id = 'custom_' + Date.now();
-  addCategory({ id, emoji: selectedEmoji, name });
-  catFormVisible = false;
-  document.getElementById('add-cat-form').classList.remove('visible');
-  renderSidebar();
-  renderCatSelect();
-  showToast(`تم إنشاء تصنيف "${name}"`);
-}
+  applyDark(dark);
+  toggle.addEventListener('click', () => applyDark(!dark));
 
-function deletecat(id, name, e) {
-  e.stopPropagation();
-  const bms = loadBookmarks();
-  const count = bms.filter(b => b.catId === id).length;
-  const msg = count > 0
-    ? `هل تريد حذف تصنيف "${name}"؟\nيحتوي على ${toAr(count)} إشارة — ستُبقى الإشارات بدون تصنيف.`
-    : `هل تريد حذف تصنيف "${name}"؟`;
-  if (!confirm(msg)) return;
-  deleteCategory(id);
-  // Remove catId from affected bookmarks
-  if (count > 0) {
-    const updated = bms.map(b => b.catId === id ? { ...b, catId: '' } : b);
-    saveBookmarks(updated);
-  }
-  if (selectedCat === id) selectCat('__all__');
-  else { renderSidebar(); renderCatSelect(); renderBookmarks(); }
-  showToast(`تم حذف التصنيف`);
-}
+  /* ── Page load animation ──────────────────────────── */
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('appRoot').classList.add('app-loaded'), 80);
+  });
 
-function selectCat(id) {
-  selectedCat = id;
-  renderSidebar();
-  renderBookmarks();
-  // Update topbar title
-  if (id === '__all__') {
-    document.getElementById('topbar-title').textContent = 'جميع الإشارات';
-    document.getElementById('area-emo').textContent = '📚';
-    document.getElementById('area-name').textContent = 'جميع الإشارات';
-  } else {
-    const cat = loadCategories().find(c => c.id === id);
-    if (cat) {
-      document.getElementById('topbar-title').textContent = cat.emoji + ' ' + cat.name;
-      document.getElementById('area-emo').textContent = cat.emoji;
-      document.getElementById('area-name').textContent = cat.name;
+  /* ── Footer year ──────────────────────────────────── */
+  document.getElementById('footerYear').textContent =
+    '© ' + new Date().getFullYear() + ' مديرية غاز جنوب المنطقة الوسطى — جميع الحقوق محفوظة';
+
+  /* ── Ripple effect on card click ──────────────────── */
+  document.querySelectorAll('.service-card').forEach(card => {
+    card.addEventListener('click', function(e) {
+      const ripple = document.createElement('span');
+      const rect   = this.getBoundingClientRect();
+      const size   = Math.max(rect.width, rect.height) * 1.5;
+      ripple.style.cssText = `
+        position:absolute; border-radius:50%; pointer-events:none;
+        width:${size}px; height:${size}px;
+        left:${e.clientX - rect.left - size/2}px;
+        top:${e.clientY - rect.top  - size/2}px;
+        background:rgba(255,255,255,0.18);
+        transform:scale(0); animation:rippleAnim 0.55s ease-out forwards;
+        z-index:10;
+      `;
+      this.appendChild(ripple);
+      ripple.addEventListener('animationend', () => ripple.remove());
+    });
+  });
+
+  /* Add ripple keyframe dynamically */
+  const s = document.createElement('style');
+  s.textContent = `
+    @keyframes rippleAnim {
+      to { transform: scale(1); opacity: 0; }
     }
-  }
-}
-
-function renderSidebar() {
-  const cats = loadCategories();
-  const bms = loadBookmarks();
-  const allCount = bms.length;
-
-  document.getElementById('count-all').textContent = toAr(allCount);
-  document.getElementById('cat-all').classList.toggle('active', selectedCat === '__all__');
-
-  const list = document.getElementById('cats-list');
-  list.innerHTML = cats.map(c => {
-    const cnt = bms.filter(b => b.catId === c.id).length;
-    return `
-      <div class="cat-item${selectedCat === c.id ? ' active' : ''}" onclick="selectCat('${c.id}')">
-        <span class="cat-emoji">${c.emoji}</span>
-        <span class="cat-name">${escHtml(c.name)}</span>
-        <span class="cat-count">${toAr(cnt)}</span>
-        <button class="cat-del" onclick="deletecat('${c.id}','${escHtml(c.name)}',event)" title="حذف">✕</button>
-      </div>`;
-  }).join('');
-
-  // Stats
-  const cats2 = new Set(bms.map(b => b.catId).filter(Boolean));
-  document.getElementById('stat-total').textContent = toAr(allCount);
-  document.getElementById('stat-cats').textContent = toAr(cats.length);
-  document.getElementById('btn-clear-all').style.display = allCount > 0 ? 'flex' : 'none';
-  document.getElementById('search-input').placeholder = `ابحث في ${toAr(allCount)} إشارة...`;
-}
-
-function renderCatSelect() {
-  const cats = loadCategories();
-  const sel = document.getElementById('inp-cat');
-  const cur = sel.value;
-  sel.innerHTML = `<option value="">— بدون تصنيف —</option>` +
-    cats.map(c => `<option value="${c.id}">${c.emoji} ${escHtml(c.name)}</option>`).join('');
-  // Restore value if still valid
-  if (cur && cats.find(c => c.id === cur)) sel.value = cur;
-  // Pre-select current filter if not "all"
-  if (selectedCat !== '__all__' && cats.find(c => c.id === selectedCat)) sel.value = selectedCat;
-}
-
-// ================================================================
-// AUTO FETCH TITLE
-// ================================================================
-let fetchTimer = null;
-let lastFetchedUrl = '';
-
-function isValidUrl(u) {
-  try { new URL(u.startsWith('http') ? u : 'https://' + u); return true; }
-  catch { return false; }
-}
-
-async function fetchSiteTitle(url) {
-  try {
-    const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}&palette=false&audio=false&video=false&screenshot=false`;
-    const res = await fetch(apiUrl, { signal: AbortSignal.timeout(6000) });
-    if (!res.ok) throw new Error('fail');
-    const json = await res.json();
-    if (json.status === 'success' && json.data?.title) return json.data.title.trim();
-    throw new Error('no title');
-  } catch {
-    try {
-      const h = new URL(url).hostname.replace('www.','').split('.');
-      return h[0].charAt(0).toUpperCase() + h[0].slice(1);
-    } catch { return ''; }
-  }
-}
-
-function onUrlInput() {
-  clearTimeout(fetchTimer);
-  const raw = document.getElementById('inp-url').value.trim();
-  document.getElementById('fetch-msg').innerHTML = '';
-  document.getElementById('fetch-ico').innerHTML = '';
-  document.getElementById('inp-url').classList.remove('loading', 'err');
-  document.getElementById('err-url').textContent = '';
-  if (!raw || !isValidUrl(raw)) return;
-  const url = normalizeUrl(raw);
-  if (url === lastFetchedUrl) return;
-  fetchTimer = setTimeout(() => doFetch(url), 700);
-}
-
-function onUrlBlur() {
-  clearTimeout(fetchTimer);
-  const raw = document.getElementById('inp-url').value.trim();
-  if (!raw || !isValidUrl(raw)) return;
-  const url = normalizeUrl(raw);
-  if (url === lastFetchedUrl) return;
-  doFetch(url);
-}
-
-async function doFetch(url) {
-  lastFetchedUrl = url;
-  document.getElementById('fetch-ico').innerHTML = '<span class="spin-sm"></span>';
-  document.getElementById('inp-url').classList.add('loading');
-  const title = await fetchSiteTitle(url);
-  document.getElementById('fetch-ico').innerHTML = '';
-  document.getElementById('inp-url').classList.remove('loading');
-  if (title) {
-    if (!document.getElementById('inp-name').value.trim())
-      document.getElementById('inp-name').value = title;
-    document.getElementById('fetch-msg').innerHTML = `<span class="fetch-ok">✓ تم جلب الاسم: ${escHtml(title)}</span>`;
-  } else {
-    document.getElementById('fetch-msg').innerHTML = `<span class="fetch-fail">⚠ تعذّر جلب الاسم تلقائياً</span>`;
-  }
-}
-
-// ================================================================
-// SIMILAR SITES DB
-// ================================================================
-const SIMILAR_DB = {
-  ai: [
-    {name:'ChatGPT',url:'https://chat.openai.com',desc:'محادثة ذكاء اصطناعي',cat:'ai'},
-    {name:'Claude',url:'https://claude.ai',desc:'مساعد ذكاء اصطناعي',cat:'ai'},
-    {name:'Gemini',url:'https://gemini.google.com',desc:'ذكاء اصطناعي من Google',cat:'ai'},
-    {name:'Perplexity',url:'https://perplexity.ai',desc:'محرك بحث بالذكاء الاصطناعي',cat:'ai'},
-    {name:'Midjourney',url:'https://midjourney.com',desc:'توليد الصور بالذكاء الاصطناعي',cat:'ai'},
-    {name:'Hugging Face',url:'https://huggingface.co',desc:'منصة نماذج الذكاء الاصطناعي',cat:'ai'},
-  ],
-  news: [
-    {name:'الجزيرة',url:'https://aljazeera.net',desc:'تغطية إخبارية دولية',cat:'news'},
-    {name:'العربية',url:'https://alarabiya.net',desc:'قناة الأخبار',cat:'news'},
-    {name:'بي بي سي',url:'https://bbc.com/arabic',desc:'أخبار BBC بالعربي',cat:'news'},
-    {name:'سكاي نيوز',url:'https://skynewsarabia.com',desc:'أخبار عاجلة',cat:'news'},
-    {name:'رويترز',url:'https://reuters.com',desc:'وكالة أنباء دولية',cat:'news'},
-    {name:'France 24',url:'https://france24.com/ar',desc:'أخبار France 24',cat:'news'},
-  ],
-  tech: [
-    {name:'TechCrunch',url:'https://techcrunch.com',desc:'أخبار التقنية',cat:'tech'},
-    {name:'The Verge',url:'https://theverge.com',desc:'التقنية والعلوم',cat:'tech'},
-    {name:'Wired',url:'https://wired.com',desc:'التكنولوجيا والثقافة',cat:'tech'},
-    {name:'Ars Technica',url:'https://arstechnica.com',desc:'تحليل تقني',cat:'tech'},
-    {name:'Hacker News',url:'https://news.ycombinator.com',desc:'منتدى المطورين',cat:'tech'},
-    {name:'MIT Tech Review',url:'https://technologyreview.com',desc:'من MIT',cat:'tech'},
-  ],
-  dev: [
-    {name:'GitHub',url:'https://github.com',desc:'استضافة الكود',cat:'dev'},
-    {name:'Stack Overflow',url:'https://stackoverflow.com',desc:'أسئلة المطورين',cat:'dev'},
-    {name:'CodePen',url:'https://codepen.io',desc:'ملعب الواجهات',cat:'dev'},
-    {name:'GitLab',url:'https://gitlab.com',desc:'منصة DevOps',cat:'dev'},
-    {name:'Dev.to',url:'https://dev.to',desc:'مجتمع المبرمجين',cat:'dev'},
-    {name:'Replit',url:'https://replit.com',desc:'برمجة في المتصفح',cat:'dev'},
-  ],
-  movies: [
-    {name:'Netflix',url:'https://netflix.com',desc:'أفلام ومسلسلات',cat:'movies'},
-    {name:'شاهد',url:'https://shahid.mbc.net',desc:'المحتوى العربي',cat:'movies'},
-    {name:'IMDb',url:'https://imdb.com',desc:'قاعدة بيانات الأفلام',cat:'movies'},
-    {name:'Letterboxd',url:'https://letterboxd.com',desc:'مجتمع عشاق السينما',cat:'movies'},
-    {name:'Disney+',url:'https://disneyplus.com',desc:'أفلام ديزني',cat:'movies'},
-    {name:'Viu',url:'https://viu.com',desc:'محتوى آسيوي وعربي',cat:'movies'},
-  ],
-  edu: [
-    {name:'رواق',url:'https://rwaq.org',desc:'تعليم إلكتروني عربي',cat:'edu'},
-    {name:'إدراك',url:'https://edraak.org',desc:'منصة تعليمية عربية',cat:'edu'},
-    {name:'Coursera',url:'https://coursera.org',desc:'دورات جامعية',cat:'edu'},
-    {name:'Udemy',url:'https://udemy.com',desc:'تعلّم أي شيء',cat:'edu'},
-    {name:'Khan Academy',url:'https://khanacademy.org',desc:'تعليم مجاني',cat:'edu'},
-    {name:'edX',url:'https://edx.org',desc:'دورات أكاديمية',cat:'edu'},
-  ],
-  shop: [
-    {name:'أمازون السعودية',url:'https://amazon.sa',desc:'تسوق إلكتروني',cat:'shop'},
-    {name:'نون',url:'https://noon.com',desc:'منصة التسوق العربية',cat:'shop'},
-    {name:'AliExpress',url:'https://aliexpress.com',desc:'سوق عالمي',cat:'shop'},
-    {name:'eBay',url:'https://ebay.com',desc:'بيع وشراء',cat:'shop'},
-    {name:'إتسي',url:'https://etsy.com',desc:'منتجات يدوية',cat:'shop'},
-    {name:'جوميا',url:'https://jumia.com',desc:'تسوق في أفريقيا',cat:'shop'},
-  ],
-  music: [
-    {name:'Spotify',url:'https://spotify.com',desc:'بث الموسيقى',cat:'music'},
-    {name:'أنغامي',url:'https://anghami.com',desc:'الموسيقى العربية',cat:'music'},
-    {name:'SoundCloud',url:'https://soundcloud.com',desc:'اكتشف الموسيقى',cat:'music'},
-    {name:'Deezer',url:'https://deezer.com',desc:'موسيقى وبودكاست',cat:'music'},
-    {name:'YouTube Music',url:'https://music.youtube.com',desc:'موسيقى يوتيوب',cat:'music'},
-    {name:'Apple Music',url:'https://music.apple.com',desc:'مكتبة موسيقية',cat:'music'},
-  ],
-  games: [
-    {name:'Steam',url:'https://store.steampowered.com',desc:'متجر الألعاب',cat:'games'},
-    {name:'IGN',url:'https://ign.com',desc:'أخبار وتقييمات الألعاب',cat:'games'},
-    {name:'Epic Games',url:'https://epicgames.com',desc:'ألعاب مجانية وأكثر',cat:'games'},
-    {name:'Twitch',url:'https://twitch.tv',desc:'بث مباشر للألعاب',cat:'games'},
-    {name:'Metacritic',url:'https://metacritic.com',desc:'تقييمات الألعاب',cat:'games'},
-    {name:'Xbox',url:'https://xbox.com',desc:'منصة Xbox',cat:'games'},
-  ],
-  design: [
-    {name:'Dribbble',url:'https://dribbble.com',desc:'إلهام التصميم',cat:'design'},
-    {name:'Behance',url:'https://behance.net',desc:'معرض الأعمال',cat:'design'},
-    {name:'Figma',url:'https://figma.com',desc:'تصميم تعاوني',cat:'design'},
-    {name:'Unsplash',url:'https://unsplash.com',desc:'صور مجانية',cat:'design'},
-    {name:'Awwwards',url:'https://awwwards.com',desc:'أفضل تصاميم الويب',cat:'design'},
-    {name:'Pinterest',url:'https://pinterest.com',desc:'اكتشاف بصري',cat:'design'},
-  ],
-  social: [
-    {name:'تويتر / X',url:'https://x.com',desc:'التواصل الاجتماعي',cat:'social'},
-    {name:'LinkedIn',url:'https://linkedin.com',desc:'التواصل المهني',cat:'social'},
-    {name:'Reddit',url:'https://reddit.com',desc:'مجتمعات النقاش',cat:'social'},
-    {name:'Mastodon',url:'https://mastodon.social',desc:'شبكة مفتوحة',cat:'social'},
-    {name:'Discord',url:'https://discord.com',desc:'دردشة المجتمعات',cat:'social'},
-    {name:'Bluesky',url:'https://bsky.app',desc:'منصة لامركزية',cat:'social'},
-  ],
-  reading: [
-    {name:'ويكيبيديا',url:'https://ar.wikipedia.org',desc:'الموسوعة الحرة',cat:'reading'},
-    {name:'Medium',url:'https://medium.com',desc:'مقالات وأفكار',cat:'reading'},
-    {name:'Pocket',url:'https://getpocket.com',desc:'احفظ للقراءة',cat:'reading'},
-    {name:'Goodreads',url:'https://goodreads.com',desc:'مجتمع القراء',cat:'reading'},
-    {name:'Feedly',url:'https://feedly.com',desc:'قارئ RSS',cat:'reading'},
-    {name:'Archive.org',url:'https://archive.org',desc:'مكتبة الإنترنت',cat:'reading'},
-  ],
-  tools: [
-    {name:'Notion',url:'https://notion.so',desc:'مساحة عمل متكاملة',cat:'tools'},
-    {name:'Trello',url:'https://trello.com',desc:'إدارة المشاريع',cat:'tools'},
-    {name:'Canva',url:'https://canva.com',desc:'تصميم سهل',cat:'tools'},
-    {name:'Google Drive',url:'https://drive.google.com',desc:'تخزين سحابي',cat:'tools'},
-    {name:'Zapier',url:'https://zapier.com',desc:'ربط التطبيقات',cat:'tools'},
-    {name:'Obsidian',url:'https://obsidian.md',desc:'تدوين ملاحظات',cat:'tools'},
-  ],
-  sports: [
-    {name:'كورة',url:'https://kooora.com',desc:'أخبار كرة القدم',cat:'sports'},
-    {name:'ESPN',url:'https://espn.com',desc:'أخبار رياضية',cat:'sports'},
-    {name:'BBC Sport',url:'https://bbc.com/sport',desc:'أخبار رياضية BBC',cat:'sports'},
-    {name:'Goal',url:'https://goal.com/ar',desc:'أخبار كرة القدم',cat:'sports'},
-    {name:'beIN Sports',url:'https://beinsports.com',desc:'قنوات رياضية',cat:'sports'},
-    {name:'filgoal',url:'https://filgoal.com',desc:'أخبار الكرة',cat:'sports'},
-  ],
-  travel: [
-    {name:'Booking.com',url:'https://booking.com',desc:'حجز الفنادق',cat:'travel'},
-    {name:'Airbnb',url:'https://airbnb.com',desc:'إيجار السكن',cat:'travel'},
-    {name:'TripAdvisor',url:'https://tripadvisor.com',desc:'تقييمات السفر',cat:'travel'},
-    {name:'Skyscanner',url:'https://skyscanner.com',desc:'مقارنة أسعار الطيران',cat:'travel'},
-    {name:'Expedia',url:'https://expedia.com',desc:'حجز السفر',cat:'travel'},
-    {name:'Kayak',url:'https://kayak.com',desc:'بحث رحلات',cat:'travel'},
-  ],
-  finance: [
-    {name:'Bloomberg',url:'https://bloomberg.com',desc:'أخبار الأعمال',cat:'finance'},
-    {name:'Investing.com',url:'https://investing.com',desc:'أسواق مالية',cat:'finance'},
-    {name:'TradingView',url:'https://tradingview.com',desc:'الرسوم البيانية',cat:'finance'},
-    {name:'Forbes',url:'https://forbes.com',desc:'أخبار الأعمال',cat:'finance'},
-    {name:'CoinMarketCap',url:'https://coinmarketcap.com',desc:'أسعار العملات الرقمية',cat:'finance'},
-    {name:'Yahoo Finance',url:'https://finance.yahoo.com',desc:'أسواق مالية',cat:'finance'},
-  ],
-  default: [
-    {name:'ويكيبيديا',url:'https://ar.wikipedia.org',desc:'الموسوعة الحرة',cat:''},
-    {name:'Reddit',url:'https://reddit.com',desc:'مجتمعات النقاش',cat:''},
-    {name:'Medium',url:'https://medium.com',desc:'مقالات وأفكار',cat:''},
-    {name:'Notion',url:'https://notion.so',desc:'مساحة عمل',cat:''},
-    {name:'Pocket',url:'https://getpocket.com',desc:'احفظ للقراءة',cat:''},
-    {name:'GitHub',url:'https://github.com',desc:'استضافة الكود',cat:''},
-  ],
-};
-
-const DOMAIN_TO_CAT = {
-  'chat.openai.com':'ai','claude.ai':'ai','gemini.google.com':'ai','perplexity.ai':'ai',
-  'midjourney.com':'ai','huggingface.co':'ai','replicate.com':'ai',
-  'aljazeera.net':'news','alarabiya.net':'news','bbc.com':'news','skynewsarabia.com':'news',
-  'reuters.com':'news','france24.com':'news','cnn.com':'news',
-  'techcrunch.com':'tech','theverge.com':'tech','wired.com':'tech','arstechnica.com':'tech',
-  'github.com':'dev','stackoverflow.com':'dev','codepen.io':'dev','replit.com':'dev',
-  'netflix.com':'movies','shahid.mbc.net':'movies','imdb.com':'movies','letterboxd.com':'movies',
-  'coursera.org':'edu','udemy.com':'edu','khanacademy.org':'edu','rwaq.org':'edu',
-  'amazon.com':'shop','amazon.sa':'shop','noon.com':'shop','aliexpress.com':'shop',
-  'spotify.com':'music','anghami.com':'music','soundcloud.com':'music','deezer.com':'music',
-  'steampowered.com':'games','ign.com':'games','twitch.tv':'games','epicgames.com':'games',
-  'dribbble.com':'design','behance.net':'design','figma.com':'design','pinterest.com':'design',
-  'twitter.com':'social','x.com':'social','linkedin.com':'social','instagram.com':'social',
-  'wikipedia.org':'reading','medium.com':'reading','pocket.com':'reading',
-  'notion.so':'tools','trello.com':'tools','canva.com':'tools',
-  'kooora.com':'sports','espn.com':'sports','goal.com':'sports',
-  'booking.com':'travel','airbnb.com':'travel','skyscanner.com':'travel',
-  'bloomberg.com':'finance','investing.com':'finance','tradingview.com':'finance',
-};
-
-function detectDbCat(url, name) {
-  try {
-    const h = new URL(normalizeUrl(url)).hostname.replace('www.','');
-    if (DOMAIN_TO_CAT[h]) return DOMAIN_TO_CAT[h];
-  } catch {}
-  const s = (url + ' ' + name).toLowerCase();
-  if (/ai|openai|claude|gemini|gpt|ذكاء|llm/.test(s)) return 'ai';
-  if (/news|أخبار|journal|times|post/.test(s)) return 'news';
-  if (/tech|code|dev|git|برمجة|تقنية/.test(s)) return 'tech';
-  if (/movie|film|series|أفلام|مسلسل/.test(s)) return 'movies';
-  if (/learn|course|edu|تعليم|دورة/.test(s)) return 'edu';
-  if (/shop|store|buy|تسوق|market/.test(s)) return 'shop';
-  if (/music|song|موسيقى|audio/.test(s)) return 'music';
-  if (/game|ألعاب|steam|play/.test(s)) return 'games';
-  if (/design|art|creative|تصميم/.test(s)) return 'design';
-  if (/social|تواصل|chat/.test(s)) return 'social';
-  if (/read|wiki|book|قراءة/.test(s)) return 'reading';
-  if (/sport|كورة|رياضة|football/.test(s)) return 'sports';
-  if (/travel|سفر|hotel|flight/.test(s)) return 'travel';
-  if (/finance|money|مال|stock/.test(s)) return 'finance';
-  return 'default';
-}
-
-function shuffle(a) {
-  const b = [...a];
-  for (let i = b.length-1; i > 0; i--) {
-    const j = Math.floor(Math.random()*(i+1));
-    [b[i],b[j]] = [b[j],b[i]];
-  }
-  return b;
-}
-
-async function discoverSimilar(url, name) {
-  await new Promise(r => setTimeout(r, 850 + Math.random()*600));
-  const cat = detectDbCat(url, name);
-  const pool = SIMILAR_DB[cat] || SIMILAR_DB.default;
-  let host = '';
-  try { host = new URL(normalizeUrl(url)).hostname.replace('www.',''); } catch {}
-  return shuffle(pool.filter(s => {
-    try { return new URL(s.url).hostname.replace('www.','') !== host; }
-    catch { return true; }
-  })).slice(0,5);
-}
-
-// ================================================================
-// STATE & RENDER
-// ================================================================
-let searchQuery = '';
-let addedSuggestions = new Set();
-
-function toAr(n) { return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]); }
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function timeAgo(ts) {
-  const d = Date.now()-ts, m=Math.floor(d/60000), h=Math.floor(d/3600000), dy=Math.floor(d/86400000);
-  if (m<1) return 'الآن';
-  if (m<60) return `منذ ${toAr(m)} د`;
-  if (h<24) return `منذ ${toAr(h)} س`;
-  return `منذ ${toAr(dy)} يوم`;
-}
-function displayHost(url) {
-  try { return new URL(url).hostname.replace('www.',''); } catch { return url; }
-}
-
-function renderBookmarks() {
-  const grid = document.getElementById('bookmarks-grid');
-  const bms = loadBookmarks();
-  const q = searchQuery.trim().toLowerCase();
-
-  let filtered = selectedCat === '__all__' ? bms : bms.filter(b => b.catId === selectedCat);
-  if (q) filtered = filtered.filter(b =>
-    b.name.toLowerCase().includes(q) ||
-    b.url.toLowerCase().includes(q)
-  );
-
-  document.getElementById('area-count').textContent = toAr(filtered.length) + ' إشارة';
-
-  if (filtered.length === 0) {
-    const isSearch = q.length > 0;
-    const isCatEmpty = !isSearch && selectedCat !== '__all__' && bms.filter(b=>b.catId===selectedCat).length===0;
-    grid.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">${isSearch ? '🔍' : '📌'}</div>
-        <h3>${isSearch ? 'لا توجد نتائج' : 'هذا المجلد فارغ'}</h3>
-        <p>${isSearch
-          ? `لا إشارات تطابق "${escHtml(searchQuery)}"`
-          : 'أضف إشارة وحدد هذا التصنيف لها عند الإضافة'
-        }</p>
-      </div>`;
-    return;
-  }
-
-  const cats = loadCategories();
-  grid.innerHTML = filtered.map((b, i) => {
-    const cat = cats.find(c => c.id === b.catId);
-    return `
-    <div class="bookmark-card" style="animation-delay:${i*30}ms">
-      <div class="bm-top">
-        <div class="bm-favicon">
-          ${b.favicon
-            ? `<img src="${escHtml(b.favicon)}" alt="" onerror="this.parentElement.textContent='${escHtml(b.name.charAt(0).toUpperCase())}'">` 
-            : escHtml(b.name.charAt(0).toUpperCase())}
-        </div>
-        <div class="bm-info">
-          <div class="bm-name" title="${escHtml(b.name)}">${escHtml(b.name)}</div>
-          <div class="bm-url">${escHtml(displayHost(b.url))}</div>
-          ${cat ? `<span class="bm-cat">${cat.emoji} ${escHtml(cat.name)}</span>` : ''}
-        </div>
-        <div class="bm-actions">
-          <a href="${escHtml(b.url)}" target="_blank" rel="noopener" class="bm-btn" title="فتح">↗</a>
-          <button class="bm-btn del" onclick="handleDelete('${b.id}')" title="حذف">🗑</button>
-        </div>
-      </div>
-      <div class="bm-time">🕐 ${timeAgo(b.addedAt)}</div>
-    </div>`;
-  }).join('');
-}
-
-// ================================================================
-// ACTIONS
-// ================================================================
-let lastSuggs = [];
-let lastSrcUrl = '';
-
-async function handleAdd(e) {
-  e.preventDefault();
-  clearTimeout(fetchTimer);
-
-  const urlVal  = document.getElementById('inp-url').value.trim();
-  const nameVal = document.getElementById('inp-name').value.trim();
-  const catVal  = document.getElementById('inp-cat').value;
-
-  // Validate
-  let ok = true;
-  document.getElementById('err-url').textContent = '';
-  document.getElementById('err-name').textContent = '';
-  document.getElementById('inp-url').classList.remove('err');
-  document.getElementById('inp-name').classList.remove('err');
-
-  if (!urlVal) {
-    document.getElementById('err-url').textContent = 'الرابط مطلوب';
-    document.getElementById('inp-url').classList.add('err'); ok = false;
-  } else if (!isValidUrl(urlVal)) {
-    document.getElementById('err-url').textContent = 'رابط غير صحيح';
-    document.getElementById('inp-url').classList.add('err'); ok = false;
-  }
-  if (!nameVal) {
-    document.getElementById('err-name').textContent = 'الاسم مطلوب';
-    document.getElementById('inp-name').classList.add('err'); ok = false;
-  }
-  if (!ok) return;
-
-  const url = normalizeUrl(urlVal);
-  const btn = document.getElementById('btn-submit');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> جارٍ الاكتشاف...';
-
-  addedSuggestions.clear();
-  addBookmarkItem({ name: nameVal, url, favicon: getFavicon(url), catId: catVal });
-  renderSidebar();
-  renderBookmarks();
-
-  // Reset form
-  document.getElementById('inp-url').value = '';
-  document.getElementById('inp-name').value = '';
-  document.getElementById('fetch-msg').innerHTML = '';
-  document.getElementById('fetch-ico').innerHTML = '';
-  lastFetchedUrl = '';
-
-  // If we're in a category, pre-select it again
-  if (selectedCat !== '__all__') {
-    const cats = loadCategories();
-    if (cats.find(c => c.id === selectedCat)) document.getElementById('inp-cat').value = selectedCat;
-  }
-
-  lastSrcUrl = url;
-  renderSkeletonSuggs(displayHost(url));
-
-  try {
-    const results = await discoverSimilar(url, nameVal);
-    lastSuggs = results;
-    renderSuggestions(results, url);
-  } catch {
-    dismissSuggestions();
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<span>+</span> إضافة الإشارة';
-  }
-}
-
-function handleDelete(id) {
-  deleteBookmarkItem(id);
-  renderSidebar();
-  renderBookmarks();
-  showToast('تم حذف الإشارة');
-}
-
-function clearAll() {
-  if (!confirm('هل تريد حذف جميع الإشارات؟ لا يمكن التراجع عن هذا الإجراء.')) return;
-  localStorage.removeItem(BM_KEY);
-  renderSidebar();
-  renderBookmarks();
-  dismissSuggestions();
-  showToast('تم مسح جميع الإشارات');
-}
-
-function handleSearch() {
-  searchQuery = document.getElementById('search-input').value;
-  document.getElementById('search-clear').classList.toggle('vis', searchQuery.length > 0);
-  renderBookmarks();
-}
-function clearSearch() {
-  document.getElementById('search-input').value = '';
-  searchQuery = '';
-  document.getElementById('search-clear').classList.remove('vis');
-  renderBookmarks();
-}
-
-// ================================================================
-// SUGGESTIONS RENDER
-// ================================================================
-function renderSkeletonSuggs(host) {
-  document.getElementById('suggestions-section').innerHTML = `
-    <div class="sug-hdr">
-      <div class="sug-hdr-left">
-        <div class="sug-hdr-icon">✨</div>
-        <div><h3>اقتراحات ذكية</h3><p>مشابه لـ ${escHtml(host)}</p></div>
-      </div>
-    </div>
-    ${Array.from({length:5}).map((_,i)=>`
-      <div class="sk-row" style="animation-delay:${i*50}ms">
-        <div class="skeleton sk-c"></div>
-        <div class="sk-l">
-          <div class="skeleton sk-ln" style="width:65%"></div>
-          <div class="skeleton sk-ln" style="width:45%;margin-top:3px"></div>
-        </div>
-        <div class="skeleton sk-b"></div>
-      </div>`).join('')}`;
-}
-
-function renderSuggestions(results, srcUrl) {
-  const host = displayHost(srcUrl);
-  if (!results || results.length === 0) {
-    document.getElementById('suggestions-section').innerHTML = `<div class="sug-placeholder"><div class="phi">🌐</div>لا توجد اقتراحات</div>`;
-    return;
-  }
-  const cats = loadCategories();
-  document.getElementById('suggestions-section').innerHTML = `
-    <div class="sug-hdr">
-      <div class="sug-hdr-left">
-        <div class="sug-hdr-icon">✨</div>
-        <div><h3>اقتراحات ذكية</h3><p>مشابه لـ ${escHtml(host)}</p></div>
-      </div>
-      <button class="btn-sug-close" onclick="dismissSuggestions()">✕</button>
-    </div>
-    ${results.map((s,i) => {
-      const fh = (() => { try { return new URL(s.url).hostname; } catch { return ''; } })();
-      const bid = 'sb'+i;
-      const matchCat = cats.find(c => c.id === s.cat);
-      return `
-      <div class="sug-item" style="animation-delay:${i*50}ms">
-        <div class="sug-fav">
-          <img src="https://www.google.com/s2/favicons?domain=${fh}&sz=32" alt="" onerror="this.parentElement.textContent='${escHtml(s.name.charAt(0))}'">
-        </div>
-        <div class="sug-info">
-          <div class="sug-name">${escHtml(s.name)}</div>
-          <div class="sug-desc">${escHtml(s.desc)}</div>
-        </div>
-        <button class="btn-add-sug ${addedSuggestions.has(s.url)?'added':''}"
-          id="${bid}"
-          data-url="${escHtml(s.url)}"
-          data-name="${escHtml(s.name)}"
-          data-cat="${escHtml(s.cat)}"
-          onclick="addSuggestion(this)">
-          ${addedSuggestions.has(s.url) ? '✓ تمت' : '+ إضافة'}
-        </button>
-      </div>`;
-    }).join('')}
-    <div class="sug-footer">يعمل بمحرك الاكتشاف الذكي</div>`;
-}
-
-function dismissSuggestions() {
-  addedSuggestions.clear();
-  document.getElementById('suggestions-section').innerHTML = `
-    <div class="sug-placeholder">
-      <div class="phi">✨</div>
-      أضف إشارة لترى اقتراحات المواقع المشابهة
-    </div>`;
-}
-
-function addSuggestion(btn) {
-  const url   = btn.dataset.url;
-  const name  = btn.dataset.name;
-  const catId = btn.dataset.cat;
-  const normUrl = normalizeUrl(url);
-  // use current selected cat if available, else use detected cat
-  const finalCat = selectedCat !== '__all__' ? selectedCat : catId;
-  addBookmarkItem({ name, url: normUrl, favicon: getFavicon(normUrl), catId: finalCat });
-  addedSuggestions.add(url);
-  renderSidebar();
-  renderBookmarks();
-  btn.classList.add('added');
-  btn.textContent = '✓ تمت';
-  showToast(`تمت إضافة "${name}"`);
-}
-
-// ================================================================
-// TOAST
-// ================================================================
-let toastT;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastT);
-  toastT = setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-// ================================================================
-// INIT
-// ================================================================
-buildEmojiRow();
-renderSidebar();
-renderCatSelect();
-renderBookmarks();
+  `;
+  document.head.appendChild(s);
 </script>
+
 </body>
 </html>
