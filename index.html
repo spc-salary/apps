@@ -6,3 +6,1067 @@
   <title>مدير الإشارات المرجعية الذكي</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f5f9;
+      --surface: #ffffff;
+      --surface2: #f0f1f7;
+      --border: #e2e4ee;
+      --text: #1a1d2e;
+      --text-muted: #7b80a0;
+      --primary: #6c5ce7;
+      --primary-light: #ede9ff;
+      --primary-fg: #ffffff;
+      --destructive: #e53e3e;
+      --destructive-light: #fff5f5;
+      --green: #38a169;
+      --green-light: #f0fff4;
+      --shadow: 0 2px 12px rgba(0,0,0,.07);
+      --radius: 14px;
+      --radius-sm: 9px;
+      --transition: .18s ease;
+    }
+
+    .dark {
+      --bg: #10111a;
+      --surface: #181926;
+      --surface2: #1f2133;
+      --border: #282c42;
+      --text: #e8eaf6;
+      --text-muted: #6b7090;
+      --primary: #8b7ff0;
+      --primary-light: #1e1a3a;
+      --shadow: 0 2px 16px rgba(0,0,0,.35);
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Tahoma', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+
+    /* ---- Header ---- */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon {
+      width: 44px; height: 44px;
+      background: var(--primary);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 20px;
+      box-shadow: 0 4px 14px rgba(108,92,231,.35);
+      flex-shrink: 0;
+    }
+    .logo-text h1 { font-size: 18px; font-weight: 700; line-height: 1.2; }
+    .logo-text p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .btn-icon {
+      width: 38px; height: 38px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      transition: all var(--transition);
+      font-size: 16px;
+    }
+    .btn-icon:hover { color: var(--text); background: var(--surface2); }
+    .btn-clear {
+      display: none;
+      align-items: center; gap: 5px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer; color: var(--text-muted); font-size: 12px;
+      transition: all var(--transition); font-family: inherit;
+    }
+    .btn-clear:hover { color: var(--destructive); border-color: var(--destructive); background: var(--destructive-light); }
+
+    /* ---- Layout ---- */
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr 290px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .layout { grid-template-columns: 300px 1fr; }
+      .suggestions-col { grid-column: 1 / -1; }
+    }
+    @media (max-width: 640px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    /* ---- Card ---- */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* ---- Form card ---- */
+    .form-card { padding: 20px; }
+    .form-card-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .form-card-icon {
+      width: 26px; height: 26px;
+      background: var(--primary-light);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 13px;
+    }
+    .form-card-header h2 { font-size: 14px; font-weight: 600; }
+
+    .form-group { margin-bottom: 12px; position: relative; }
+    .form-label {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600;
+      color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .input-wrap { position: relative; }
+    .form-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 13px; color: var(--text);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+      font-family: inherit;
+      direction: ltr;
+      text-align: right;
+    }
+    #inp-name { direction: rtl; text-align: right; }
+    .form-input::placeholder { color: var(--text-muted); }
+    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,92,231,.15); }
+    .form-input.error { border-color: var(--destructive); }
+    .form-input.loading-input { padding-left: 36px; }
+    .form-error { font-size: 11px; color: var(--destructive); margin-top: 4px; }
+    .fetch-status {
+      position: absolute;
+      left: 10px; top: 50%; transform: translateY(-50%);
+      font-size: 13px;
+      pointer-events: none;
+    }
+    .fetch-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 600;
+      padding: 2px 7px; border-radius: 20px;
+      background: var(--green-light); color: var(--green);
+      margin-top: 4px;
+    }
+    .fetch-badge.error { background: var(--destructive-light); color: var(--destructive); }
+
+    .btn-primary {
+      width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      background: var(--primary);
+      color: var(--primary-fg);
+      border: none; border-radius: var(--radius-sm);
+      padding: 11px 16px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+      margin-top: 4px;
+    }
+    .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-primary:active { transform: scale(.98); }
+    .btn-primary:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+    /* ---- Stats ---- */
+    .stats-card {
+      background: linear-gradient(135deg, var(--primary-light), var(--surface2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; margin-top: 12px;
+      text-align: center;
+    }
+    .stat-num { font-size: 24px; font-weight: 800; color: var(--primary); }
+    .stat-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ---- Search ---- */
+    .search-wrap { position: relative; margin-bottom: 16px; }
+    .search-icon-wrap {
+      position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+      color: var(--text-muted); pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 40px 10px 36px;
+      font-size: 13px; color: var(--text);
+      outline: none;
+      direction: rtl;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      font-family: inherit;
+    }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,92,231,.12); }
+    .search-clear {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: var(--text-muted);
+      display: none; padding: 3px; font-size: 13px;
+    }
+    .search-clear.visible { display: block; }
+
+    /* ---- Bookmarks grid ---- */
+    .bookmarks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+    }
+
+    .bookmark-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      transition: all var(--transition);
+      animation: fadeUp .28s ease both;
+      position: relative;
+    }
+    .bookmark-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+
+    .bm-top { display: flex; align-items: flex-start; gap: 10px; }
+    .bm-favicon {
+      width: 36px; height: 36px; flex-shrink: 0;
+      background: var(--surface2);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: var(--text-muted);
+      overflow: hidden;
+    }
+    .bm-favicon img { width: 20px; height: 20px; object-fit: contain; }
+    .bm-info { flex: 1; min-width: 0; }
+    .bm-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bm-url { font-size: 11px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; direction: ltr; text-align: right; }
+    .bm-category {
+      display: inline-block; margin-top: 5px;
+      font-size: 10px; font-weight: 600;
+      padding: 2px 8px; border-radius: 20px;
+      background: var(--primary-light); color: var(--primary);
+    }
+    .bm-actions {
+      display: flex; gap: 3px;
+      opacity: 0; transition: opacity var(--transition);
+    }
+    .bookmark-card:hover .bm-actions { opacity: 1; }
+    .bm-btn {
+      width: 28px; height: 28px;
+      background: none; border: none;
+      border-radius: 7px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 13px;
+      transition: all var(--transition);
+    }
+    .bm-btn:hover { background: var(--surface2); color: var(--text); }
+    .bm-btn.delete:hover { background: var(--destructive-light); color: var(--destructive); }
+    .bm-time {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 10px; color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    /* ---- Empty state ---- */
+    .empty { grid-column: 1 / -1; text-align: center; padding: 60px 20px; }
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .empty p { font-size: 13px; color: var(--text-muted); max-width: 280px; margin: 0 auto; line-height: 1.6; }
+
+    /* ---- Suggestions panel ---- */
+    .suggestions-panel { overflow: hidden; }
+    .suggestions-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(108,92,231,.06), transparent);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .suggestions-title { display: flex; align-items: center; gap: 8px; }
+    .suggestions-icon {
+      width: 28px; height: 28px; background: var(--primary-light);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 13px;
+    }
+    .suggestions-title h3 { font-size: 13px; font-weight: 600; }
+    .suggestions-title p { font-size: 10px; color: var(--text-muted); }
+    .btn-dismiss {
+      width: 26px; height: 26px; background: none; border: none;
+      border-radius: 7px; cursor: pointer;
+      color: var(--text-muted); display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition); font-size: 14px;
+    }
+    .btn-dismiss:hover { background: var(--surface2); color: var(--text); }
+
+    .suggestion-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+      animation: slideRight .25s ease both;
+    }
+    .suggestion-item:last-child { border-bottom: none; }
+    .suggestion-item:hover { background: var(--surface2); }
+    .sug-favicon {
+      width: 32px; height: 32px; flex-shrink: 0;
+      background: var(--surface2); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: var(--text-muted); overflow: hidden;
+    }
+    .sug-favicon img { width: 18px; height: 18px; object-fit: contain; }
+    .sug-info { flex: 1; min-width: 0; }
+    .sug-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sug-desc { font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .btn-add-sug {
+      flex-shrink: 0;
+      display: flex; align-items: center; gap: 4px;
+      padding: 5px 10px; border-radius: 7px; border: none; cursor: pointer;
+      font-size: 11px; font-weight: 600;
+      background: var(--primary); color: #fff;
+      transition: all var(--transition); font-family: inherit;
+    }
+    .btn-add-sug:hover { opacity: .85; }
+    .btn-add-sug.added { background: var(--green-light); color: var(--green); }
+    .suggestions-footer {
+      padding: 8px 14px;
+      background: var(--surface2); border-top: 1px solid var(--border);
+      font-size: 10px; color: var(--text-muted); text-align: center;
+    }
+
+    .suggestions-placeholder {
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius); padding: 28px 16px;
+      text-align: center; color: var(--text-muted); font-size: 12px; line-height: 1.6;
+    }
+    .suggestions-placeholder .ph-icon { font-size: 26px; margin-bottom: 8px; opacity: .4; }
+
+    /* ---- Skeleton ---- */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite; border-radius: 6px;
+    }
+    .skel-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .skel-circle { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; }
+    .skel-lines { flex: 1; }
+    .skel-line { height: 10px; margin-bottom: 5px; }
+    .skel-btn { width: 52px; height: 26px; flex-shrink: 0; border-radius: 7px; }
+
+    /* ---- Spinner ---- */
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+    }
+    .spinner-sm {
+      width: 13px; height: 13px;
+      border: 2px solid rgba(108,92,231,.3);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+    }
+
+    /* ---- Animations ---- */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @keyframes slideRight { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- Toast ---- */
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--text); color: var(--bg);
+      padding: 9px 18px; border-radius: 30px; font-size: 13px; font-weight: 500;
+      box-shadow: 0 4px 20px rgba(0,0,0,.2);
+      transition: transform .3s ease, opacity .3s ease; opacity: 0; z-index: 999; white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🔖</div>
+      <div class="logo-text">
+        <h1>مدير الإشارات الذكي</h1>
+        <p id="header-count">٠ محفوظ · اكتشاف ذكي بالذكاء الاصطناعي</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-clear" id="btn-clear-all" onclick="clearAll()">🗑 مسح الكل</button>
+      <button class="btn-icon" id="btn-theme" onclick="toggleTheme()" title="تبديل الوضع الليلي">🌙</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- ===== RIGHT (RTL = right first): ADD FORM ===== -->
+    <div>
+      <div class="card form-card">
+        <div class="form-card-header">
+          <div class="form-card-icon">✨</div>
+          <h2>إضافة إشارة مرجعية</h2>
+        </div>
+
+        <form id="add-form" onsubmit="handleAdd(event)">
+          <div class="form-group">
+            <label class="form-label">🔗 رابط الموقع</label>
+            <div class="input-wrap">
+              <input id="inp-url" class="form-input" type="text"
+                placeholder="https://example.com"
+                autocomplete="off"
+                oninput="onUrlInput()"
+                onblur="onUrlBlur()" />
+              <span class="fetch-status" id="fetch-status"></span>
+            </div>
+            <div id="fetch-msg"></div>
+            <div class="form-error" id="err-url"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">🏷 اسم الموقع</label>
+            <input id="inp-name" class="form-input" type="text" placeholder="موقعي المفضل" autocomplete="off" />
+            <div class="form-error" id="err-name"></div>
+          </div>
+          <button type="submit" class="btn-primary" id="btn-submit">
+            <span>+</span> إضافة الإشارة
+          </button>
+        </form>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-card">
+        <div><div class="stat-num" id="stat-total">٠</div><div class="stat-label">الإشارات</div></div>
+        <div><div class="stat-num" id="stat-cats">٠</div><div class="stat-label">التصنيفات</div></div>
+      </div>
+    </div>
+
+    <!-- ===== CENTER: BOOKMARKS ===== -->
+    <div>
+      <div class="search-wrap">
+        <span class="search-icon-wrap">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </span>
+        <input id="search-input" class="search-input" type="search"
+          placeholder="ابحث في إشاراتك..."
+          oninput="handleSearch()" />
+        <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+      </div>
+      <div class="bookmarks-grid" id="bookmarks-grid"></div>
+    </div>
+
+    <!-- ===== LEFT (RTL = left side): SUGGESTIONS ===== -->
+    <div class="suggestions-col">
+      <div id="suggestions-container">
+        <div class="suggestions-placeholder">
+          <div class="ph-icon">✨</div>
+          أضف إشارة مرجعية لترى الاقتراحات الذكية هنا
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ========================
+// STORAGE
+// ========================
+const STORAGE_KEY = 'smart-bookmarks-v1';
+function loadBookmarks() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function saveBookmarks(list) { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+function addBookmark(bm) {
+  const list = loadBookmarks();
+  const item = { ...bm, id: crypto.randomUUID(), addedAt: Date.now() };
+  saveBookmarks([item, ...list]);
+  return item;
+}
+function deleteBookmark(id) { saveBookmarks(loadBookmarks().filter(b => b.id !== id)); }
+function getFavicon(url) {
+  try {
+    const h = new URL(url.startsWith('http') ? url : 'https://' + url).hostname;
+    return `https://www.google.com/s2/favicons?domain=${h}&sz=32`;
+  } catch { return ''; }
+}
+function normalizeUrl(url) {
+  if (!url) return '';
+  return (url.startsWith('http://') || url.startsWith('https://')) ? url : 'https://' + url;
+}
+
+// ========================
+// THEME
+// ========================
+let currentTheme = localStorage.getItem('sbm-theme') ||
+  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+function applyTheme() {
+  document.documentElement.classList.toggle('dark', currentTheme === 'dark');
+  document.getElementById('btn-theme').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+}
+function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('sbm-theme', currentTheme);
+  applyTheme();
+}
+applyTheme();
+
+// ========================
+// AUTO FETCH SITE TITLE
+// ========================
+let fetchTimer = null;
+let lastFetchedUrl = '';
+
+async function fetchSiteTitle(url) {
+  try {
+    // Use microlink.io free API — returns metadata (title, description, etc.)
+    const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}&palette=false&audio=false&video=false&screenshot=false`;
+    const res = await fetch(apiUrl, { signal: AbortSignal.timeout(6000) });
+    if (!res.ok) throw new Error('failed');
+    const json = await res.json();
+    if (json.status === 'success' && json.data && json.data.title) {
+      return json.data.title.trim();
+    }
+    throw new Error('no title');
+  } catch {
+    // Fallback: extract hostname as a readable name
+    try {
+      const hostname = new URL(url).hostname.replace('www.', '');
+      const parts = hostname.split('.');
+      const name = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+      return name;
+    } catch { return ''; }
+  }
+}
+
+function isValidUrl(url) {
+  try { new URL(url.startsWith('http') ? url : 'https://' + url); return true; }
+  catch { return false; }
+}
+
+function onUrlInput() {
+  clearTimeout(fetchTimer);
+  const raw = document.getElementById('inp-url').value.trim();
+  document.getElementById('fetch-msg').innerHTML = '';
+  document.getElementById('fetch-status').innerHTML = '';
+  document.getElementById('inp-url').classList.remove('loading-input');
+  document.getElementById('err-url').textContent = '';
+
+  if (!raw || !isValidUrl(raw)) return;
+  const url = normalizeUrl(raw);
+  if (url === lastFetchedUrl) return;
+
+  // Debounce 700ms
+  fetchTimer = setTimeout(() => triggerFetch(url), 700);
+}
+
+function onUrlBlur() {
+  clearTimeout(fetchTimer);
+  const raw = document.getElementById('inp-url').value.trim();
+  if (!raw || !isValidUrl(raw)) return;
+  const url = normalizeUrl(raw);
+  if (url === lastFetchedUrl) return;
+  triggerFetch(url);
+}
+
+async function triggerFetch(url) {
+  lastFetchedUrl = url;
+  document.getElementById('fetch-status').innerHTML = '<span class="spinner-sm"></span>';
+  document.getElementById('inp-url').classList.add('loading-input');
+  document.getElementById('fetch-msg').innerHTML = '';
+
+  const title = await fetchSiteTitle(url);
+
+  document.getElementById('fetch-status').innerHTML = '';
+  document.getElementById('inp-url').classList.remove('loading-input');
+
+  if (title) {
+    // Fill name input if empty
+    const nameInp = document.getElementById('inp-name');
+    if (!nameInp.value.trim()) nameInp.value = title;
+    document.getElementById('fetch-msg').innerHTML =
+      `<span class="fetch-badge">✓ تم جلب الاسم: ${escHtml(title)}</span>`;
+  } else {
+    document.getElementById('fetch-msg').innerHTML =
+      `<span class="fetch-badge error">تعذّر جلب الاسم تلقائياً</span>`;
+  }
+}
+
+// ========================
+// DISCOVERY ENGINE
+// ========================
+const SIMILAR_DB = {
+  news: [
+    { name:'رويترز', url:'https://reuters.com', desc:'أخبار عالمية شاملة', cat:'أخبار' },
+    { name:'بي بي سي عربي', url:'https://bbc.com/arabic', desc:'أخبار من بي بي سي', cat:'أخبار' },
+    { name:'الجزيرة', url:'https://aljazeera.net', desc:'تغطية إخبارية دولية', cat:'أخبار' },
+    { name:'العربية', url:'https://alarabiya.net', desc:'قناة الأخبار العربية', cat:'أخبار' },
+    { name:'AP News', url:'https://apnews.com', desc:'وكالة أنباء أسوشيتد برس', cat:'أخبار' },
+    { name:'سكاي نيوز عربية', url:'https://skynewsarabia.com', desc:'أخبار عاجلة', cat:'أخبار' },
+  ],
+  tech: [
+    { name:'TechCrunch', url:'https://techcrunch.com', desc:'أخبار التكنولوجيا', cat:'تقنية' },
+    { name:'The Verge', url:'https://theverge.com', desc:'التقنية والعلوم', cat:'تقنية' },
+    { name:'Hacker News', url:'https://news.ycombinator.com', desc:'منتدى المطورين', cat:'تقنية' },
+    { name:'Wired', url:'https://wired.com', desc:'التكنولوجيا والثقافة', cat:'تقنية' },
+    { name:'Ars Technica', url:'https://arstechnica.com', desc:'تحليل تقني معمّق', cat:'تقنية' },
+    { name:'عالم التقنية', url:'https://3alam.net', desc:'أخبار التقنية بالعربي', cat:'تقنية' },
+  ],
+  social: [
+    { name:'تويتر / X', url:'https://x.com', desc:'منصة التواصل الاجتماعي', cat:'تواصل اجتماعي' },
+    { name:'لينكد إن', url:'https://linkedin.com', desc:'التواصل المهني', cat:'تواصل اجتماعي' },
+    { name:'ريديت', url:'https://reddit.com', desc:'مجتمعات النقاش', cat:'تواصل اجتماعي' },
+    { name:'ماستودون', url:'https://mastodon.social', desc:'شبكة اجتماعية مفتوحة', cat:'تواصل اجتماعي' },
+    { name:'ديسكورد', url:'https://discord.com', desc:'دردشة المجتمعات', cat:'تواصل اجتماعي' },
+    { name:'بلوسكاي', url:'https://bsky.app', desc:'منصة لامركزية', cat:'تواصل اجتماعي' },
+  ],
+  video: [
+    { name:'Vimeo', url:'https://vimeo.com', desc:'استضافة فيديو عالية الجودة', cat:'فيديو' },
+    { name:'Twitch', url:'https://twitch.tv', desc:'البث المباشر', cat:'فيديو' },
+    { name:'Dailymotion', url:'https://dailymotion.com', desc:'منصة الفيديو', cat:'فيديو' },
+    { name:'شاهد', url:'https://shahid.mbc.net', desc:'منصة المحتوى العربي', cat:'فيديو' },
+    { name:'Odysee', url:'https://odysee.com', desc:'فيديو لامركزي', cat:'فيديو' },
+    { name:'رووداه', url:'https://www.rotana.net', desc:'الترفيه العربي', cat:'فيديو' },
+  ],
+  dev: [
+    { name:'GitHub', url:'https://github.com', desc:'استضافة الأكواد', cat:'برمجة' },
+    { name:'GitLab', url:'https://gitlab.com', desc:'منصة DevOps', cat:'برمجة' },
+    { name:'Stack Overflow', url:'https://stackoverflow.com', desc:'مجتمع المطورين', cat:'برمجة' },
+    { name:'CodePen', url:'https://codepen.io', desc:'ملعب الواجهات', cat:'برمجة' },
+    { name:'Dev.to', url:'https://dev.to', desc:'مجتمع المبرمجين', cat:'برمجة' },
+    { name:'Replit', url:'https://replit.com', desc:'البرمجة في المتصفح', cat:'برمجة' },
+  ],
+  design: [
+    { name:'Dribbble', url:'https://dribbble.com', desc:'إلهام التصميم', cat:'تصميم' },
+    { name:'Behance', url:'https://behance.net', desc:'معرض الأعمال الإبداعية', cat:'تصميم' },
+    { name:'Figma', url:'https://figma.com', desc:'أداة التصميم التعاوني', cat:'تصميم' },
+    { name:'Awwwards', url:'https://awwwards.com', desc:'أفضل تصاميم الويب', cat:'تصميم' },
+    { name:'Pinterest', url:'https://pinterest.com', desc:'اكتشاف بصري', cat:'تصميم' },
+    { name:'Unsplash', url:'https://unsplash.com', desc:'صور مجانية عالية الجودة', cat:'تصميم' },
+  ],
+  shopping: [
+    { name:'أمازون السعودية', url:'https://amazon.sa', desc:'تسوق إلكتروني', cat:'تسوق' },
+    { name:'نون', url:'https://noon.com', desc:'منصة التسوق العربية', cat:'تسوق' },
+    { name:'جوميا', url:'https://jumia.com', desc:'التسوق في أفريقيا', cat:'تسوق' },
+    { name:'AliExpress', url:'https://aliexpress.com', desc:'سوق عالمي', cat:'تسوق' },
+    { name:'eBay', url:'https://ebay.com', desc:'البيع والشراء', cat:'تسوق' },
+    { name:'إتسي', url:'https://etsy.com', desc:'المنتجات اليدوية', cat:'تسوق' },
+  ],
+  education: [
+    { name:'رواق', url:'https://www.rwaq.org', desc:'تعليم إلكتروني عربي', cat:'تعليم' },
+    { name:'إدراك', url:'https://www.edraak.org', desc:'منصة تعليمية عربية', cat:'تعليم' },
+    { name:'Coursera', url:'https://coursera.org', desc:'دورات من جامعات عالمية', cat:'تعليم' },
+    { name:'Udemy', url:'https://udemy.com', desc:'تعلّم أي شيء', cat:'تعليم' },
+    { name:'Khan Academy', url:'https://khanacademy.org', desc:'تعليم مجاني للجميع', cat:'تعليم' },
+    { name:'edX', url:'https://edx.org', desc:'دورات أكاديمية', cat:'تعليم' },
+  ],
+  music: [
+    { name:'Spotify', url:'https://spotify.com', desc:'بث الموسيقى', cat:'موسيقى' },
+    { name:'SoundCloud', url:'https://soundcloud.com', desc:'اكتشف الموسيقى', cat:'موسيقى' },
+    { name:'Anghami', url:'https://anghami.com', desc:'الموسيقى العربية', cat:'موسيقى' },
+    { name:'Deezer', url:'https://deezer.com', desc:'موسيقى وبودكاست', cat:'موسيقى' },
+    { name:'Apple Music', url:'https://music.apple.com', desc:'مكتبة موسيقية كاملة', cat:'موسيقى' },
+    { name:'YouTube Music', url:'https://music.youtube.com', desc:'موسيقى يوتيوب', cat:'موسيقى' },
+  ],
+  search: [
+    { name:'DuckDuckGo', url:'https://duckduckgo.com', desc:'بحث يحترم خصوصيتك', cat:'بحث' },
+    { name:'Bing', url:'https://bing.com', desc:'محرك بحث مايكروسوفت', cat:'بحث' },
+    { name:'Brave Search', url:'https://search.brave.com', desc:'بحث مستقل وخاص', cat:'بحث' },
+    { name:'Ecosia', url:'https://ecosia.org', desc:'بحث يزرع الأشجار', cat:'بحث' },
+    { name:'Kagi', url:'https://kagi.com', desc:'بحث بلا إعلانات', cat:'بحث' },
+    { name:'Startpage', url:'https://startpage.com', desc:'نتائج Google بخصوصية', cat:'بحث' },
+  ],
+  default: [
+    { name:'ويكيبيديا', url:'https://ar.wikipedia.org', desc:'الموسوعة الحرة', cat:'مرجع' },
+    { name:'ريديت', url:'https://reddit.com', desc:'مجتمعات النقاش', cat:'تواصل' },
+    { name:'ميديوم', url:'https://medium.com', desc:'قصص وأفكار', cat:'مدونة' },
+    { name:'Pocket', url:'https://getpocket.com', desc:'احفظ المقالات للقراءة', cat:'قراءة' },
+    { name:'نوشن', url:'https://notion.so', desc:'مساحة عمل متكاملة', cat:'إنتاجية' },
+    { name:'Feedly', url:'https://feedly.com', desc:'قارئ RSS', cat:'قراءة' },
+  ],
+};
+
+const DOMAIN_MAP = {
+  'cnn.com':'news','bbc.com':'news','nytimes.com':'news','reuters.com':'news',
+  'theguardian.com':'news','aljazeera.net':'news','alarabiya.net':'news',
+  'skynewsarabia.com':'news','france24.com':'news',
+  'techcrunch.com':'tech','theverge.com':'tech','wired.com':'tech',
+  'arstechnica.com':'tech','engadget.com':'tech',
+  'twitter.com':'social','x.com':'social','facebook.com':'social',
+  'instagram.com':'social','linkedin.com':'social','reddit.com':'social',
+  'youtube.com':'video','vimeo.com':'video','twitch.tv':'video',
+  'tiktok.com':'video','shahid.mbc.net':'video',
+  'github.com':'dev','gitlab.com':'dev','stackoverflow.com':'dev',
+  'codepen.io':'dev','dev.to':'dev','replit.com':'dev',
+  'dribbble.com':'design','behance.net':'design','figma.com':'design','pinterest.com':'design',
+  'amazon.com':'shopping','amazon.sa':'shopping','noon.com':'shopping',
+  'ebay.com':'shopping','aliexpress.com':'shopping',
+  'coursera.org':'education','udemy.com':'education','edx.org':'education',
+  'khanacademy.org':'education','rwaq.org':'education','edraak.org':'education',
+  'spotify.com':'music','soundcloud.com':'music','anghami.com':'music',
+  'deezer.com':'music',
+  'google.com':'search','duckduckgo.com':'search','bing.com':'search',
+};
+
+function detectCategory(url, name) {
+  try {
+    const h = new URL(url.startsWith('http') ? url : 'https://' + url).hostname.replace('www.','');
+    if (DOMAIN_MAP[h]) return DOMAIN_MAP[h];
+  } catch {}
+  const s = (url + ' ' + name).toLowerCase();
+  if (/news|أخبار|journal|times|post|herald/.test(s)) return 'news';
+  if (/tech|code|dev|software|hack|git|تقنية|برمجة/.test(s)) return 'tech';
+  if (/social|friend|chat|تواصل/.test(s)) return 'social';
+  if (/video|stream|watch|film|tube|فيديو/.test(s)) return 'video';
+  if (/design|art|creative|تصميم/.test(s)) return 'design';
+  if (/shop|store|buy|market|تسوق/.test(s)) return 'shopping';
+  if (/learn|course|edu|school|تعليم|دورة/.test(s)) return 'education';
+  if (/music|song|audio|موسيقى/.test(s)) return 'music';
+  if (/search|بحث/.test(s)) return 'search';
+  return 'default';
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+async function discoverSimilar(url, name) {
+  await new Promise(r => setTimeout(r, 900 + Math.random() * 600));
+  const cat = detectCategory(url, name);
+  const pool = SIMILAR_DB[cat] || SIMILAR_DB.default;
+  let inputHost = '';
+  try { inputHost = new URL(url.startsWith('http') ? url : 'https://' + url).hostname.replace('www.',''); } catch {}
+  const filtered = pool.filter(s => {
+    try { return new URL(s.url).hostname.replace('www.','') !== inputHost; } catch { return true; }
+  });
+  return shuffle(filtered).slice(0, 5);
+}
+
+// ========================
+// STATE
+// ========================
+let bookmarks = loadBookmarks();
+let searchQuery = '';
+let addedSuggestions = new Set();
+
+// ========================
+// HELPERS
+// ========================
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function toArabicNum(n) {
+  return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+}
+function timeAgo(ts) {
+  const d = Date.now() - ts;
+  const m = Math.floor(d / 60000), h = Math.floor(d / 3600000), dy = Math.floor(d / 86400000);
+  if (m < 1) return 'الآن';
+  if (m < 60) return `منذ ${toArabicNum(m)} دقيقة`;
+  if (h < 24) return `منذ ${toArabicNum(h)} ساعة`;
+  return `منذ ${toArabicNum(dy)} يوم`;
+}
+function displayHost(url) {
+  try { return new URL(url).hostname.replace('www.',''); } catch { return url; }
+}
+
+// ========================
+// RENDER
+// ========================
+function renderBookmarks() {
+  const grid = document.getElementById('bookmarks-grid');
+  const q = searchQuery.trim().toLowerCase();
+  const filtered = q
+    ? bookmarks.filter(b =>
+        b.name.toLowerCase().includes(q) ||
+        b.url.toLowerCase().includes(q) ||
+        (b.category || '').toLowerCase().includes(q))
+    : bookmarks;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">${bookmarks.length === 0 ? '📌' : '🔍'}</div>
+        <h3>${bookmarks.length === 0 ? 'لا توجد إشارات مرجعية بعد' : 'لا توجد نتائج'}</h3>
+        <p>${bookmarks.length === 0
+          ? 'أضف إشارتك الأولى من القائمة على اليمين. سيقترح عليك محرك الاكتشاف مواقع مشابهة تلقائياً.'
+          : 'لا توجد إشارات تطابق "' + escHtml(searchQuery) + '"'}</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((b, i) => `
+    <div class="bookmark-card" style="animation-delay:${i*35}ms">
+      <div class="bm-top">
+        <div class="bm-favicon">
+          ${b.favicon
+            ? `<img src="${escHtml(b.favicon)}" alt="" onerror="this.parentElement.textContent='${escHtml(b.name.charAt(0).toUpperCase())}'">` 
+            : escHtml(b.name.charAt(0).toUpperCase())}
+        </div>
+        <div class="bm-info">
+          <div class="bm-name" title="${escHtml(b.name)}">${escHtml(b.name)}</div>
+          <div class="bm-url" title="${escHtml(b.url)}">${escHtml(displayHost(b.url))}</div>
+          ${b.category ? `<span class="bm-category">${escHtml(b.category)}</span>` : ''}
+        </div>
+        <div class="bm-actions">
+          <a href="${escHtml(b.url)}" target="_blank" rel="noopener" class="bm-btn" title="فتح">↗</a>
+          <button class="bm-btn delete" onclick="handleDelete('${b.id}')" title="حذف">🗑</button>
+        </div>
+      </div>
+      <div class="bm-time">🕐 ${timeAgo(b.addedAt)}</div>
+    </div>`).join('');
+}
+
+function updateMeta() {
+  bookmarks = loadBookmarks();
+  const cats = new Set(bookmarks.map(b => b.category).filter(Boolean));
+  document.getElementById('header-count').textContent = `${toArabicNum(bookmarks.length)} محفوظ · اكتشاف ذكي`;
+  document.getElementById('stat-total').textContent = toArabicNum(bookmarks.length);
+  document.getElementById('stat-cats').textContent = toArabicNum(cats.size);
+  const clearBtn = document.getElementById('btn-clear-all');
+  clearBtn.style.display = bookmarks.length > 0 ? 'flex' : 'none';
+  document.getElementById('search-input').placeholder = `ابحث في ${toArabicNum(bookmarks.length)} إشارة...`;
+}
+
+function renderSkeletonSuggestions(sourceHost) {
+  document.getElementById('suggestions-container').innerHTML = `
+    <div class="card suggestions-panel">
+      <div class="suggestions-header">
+        <div class="suggestions-title">
+          <div class="suggestions-icon">✨</div>
+          <div>
+            <h3>اقتراحات ذكية</h3>
+            <p>مشابه لـ ${escHtml(sourceHost)}</p>
+          </div>
+        </div>
+      </div>
+      ${Array.from({length:5}).map((_,i) => `
+        <div class="skel-row" style="animation-delay:${i*60}ms">
+          <div class="skeleton skel-circle"></div>
+          <div class="skel-lines">
+            <div class="skeleton skel-line" style="width:65%"></div>
+            <div class="skeleton skel-line" style="width:45%;margin-top:4px"></div>
+          </div>
+          <div class="skeleton skel-btn"></div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderSuggestions(results, sourceUrl) {
+  const host = displayHost(sourceUrl);
+  if (!results || results.length === 0) {
+    document.getElementById('suggestions-container').innerHTML = `
+      <div class="suggestions-placeholder">
+        <div class="ph-icon">🌐</div>لا توجد اقتراحات متاحة
+      </div>`;
+    return;
+  }
+  document.getElementById('suggestions-container').innerHTML = `
+    <div class="card suggestions-panel">
+      <div class="suggestions-header">
+        <div class="suggestions-title">
+          <div class="suggestions-icon">✨</div>
+          <div>
+            <h3>اقتراحات ذكية</h3>
+            <p>مشابه لـ ${escHtml(host)}</p>
+          </div>
+        </div>
+        <button class="btn-dismiss" onclick="dismissSuggestions()" title="إغلاق">✕</button>
+      </div>
+      ${results.map((s, i) => {
+        const favHost = (() => { try { return new URL(s.url).hostname; } catch { return ''; } })();
+        const btnId = 'sug-' + btoa(s.url).replace(/[^a-z0-9]/gi,'').substring(0,12);
+        return `
+        <div class="suggestion-item" style="animation-delay:${i*55}ms">
+          <div class="sug-favicon">
+            <img src="https://www.google.com/s2/favicons?domain=${favHost}&sz=32"
+              alt="" onerror="this.parentElement.textContent='${escHtml(s.name.charAt(0))}'">
+          </div>
+          <div class="sug-info">
+            <div class="sug-name">${escHtml(s.name)}</div>
+            <div class="sug-desc">${escHtml(s.desc)}</div>
+          </div>
+          <button class="btn-add-sug ${addedSuggestions.has(s.url) ? 'added' : ''}"
+            id="${btnId}"
+            data-url="${escHtml(s.url)}"
+            data-name="${escHtml(s.name)}"
+            data-cat="${escHtml(s.cat)}"
+            onclick="addSuggestion(this)">
+            ${addedSuggestions.has(s.url) ? '✓ تمت الإضافة' : '+ إضافة'}
+          </button>
+        </div>`;
+      }).join('')}
+      <div class="suggestions-footer">يعمل بمحرك الاكتشاف الذكي</div>
+    </div>`;
+}
+
+function dismissSuggestions() {
+  addedSuggestions.clear();
+  document.getElementById('suggestions-container').innerHTML = `
+    <div class="suggestions-placeholder">
+      <div class="ph-icon">✨</div>
+      أضف إشارة مرجعية لترى الاقتراحات الذكية هنا
+    </div>`;
+}
+
+// ========================
+// ACTIONS
+// ========================
+let lastSuggestions = [];
+
+async function handleAdd(e) {
+  e.preventDefault();
+  clearTimeout(fetchTimer);
+
+  const urlVal = document.getElementById('inp-url').value.trim();
+  const nameVal = document.getElementById('inp-name').value.trim();
+
+  let valid = true;
+  document.getElementById('err-url').textContent = '';
+  document.getElementById('err-name').textContent = '';
+  document.getElementById('inp-url').classList.remove('error');
+  document.getElementById('inp-name').classList.remove('error');
+
+  if (!urlVal) {
+    document.getElementById('err-url').textContent = 'الرابط مطلوب';
+    document.getElementById('inp-url').classList.add('error'); valid = false;
+  } else if (!isValidUrl(urlVal)) {
+    document.getElementById('err-url').textContent = 'يرجى إدخال رابط صحيح';
+    document.getElementById('inp-url').classList.add('error'); valid = false;
+  }
+  if (!nameVal) {
+    document.getElementById('err-name').textContent = 'اسم الموقع مطلوب';
+    document.getElementById('inp-name').classList.add('error'); valid = false;
+  }
+  if (!valid) return;
+
+  const url = normalizeUrl(urlVal);
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> جارٍ الاكتشاف...';
+
+  addedSuggestions.clear();
+  addBookmark({ name: nameVal, url, favicon: getFavicon(url) });
+  updateMeta();
+  renderBookmarks();
+
+  document.getElementById('inp-url').value = '';
+  document.getElementById('inp-name').value = '';
+  document.getElementById('fetch-msg').innerHTML = '';
+  document.getElementById('fetch-status').innerHTML = '';
+  lastFetchedUrl = '';
+
+  const sourceUrl = url;
+  renderSkeletonSuggestions(displayHost(sourceUrl));
+
+  try {
+    const results = await discoverSimilar(url, nameVal);
+    lastSuggestions = results;
+    renderSuggestions(results, sourceUrl);
+  } catch {
+    dismissSuggestions();
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>+</span> إضافة الإشارة';
+    document.getElementById('inp-url').focus();
+  }
+}
+
+function addSuggestion(btn) {
+  const url = btn.dataset.url;
+  const name = btn.dataset.name;
+  const cat = btn.dataset.cat;
+  const normUrl = normalizeUrl(url);
+  addBookmark({ name, url: normUrl, favicon: getFavicon(normUrl), category: cat });
+  addedSuggestions.add(url);
+  updateMeta();
+  renderBookmarks();
+  btn.classList.add('added');
+  btn.textContent = '✓ تمت الإضافة';
+  showToast(`تمت إضافة "${name}" بنجاح`);
+}
+
+function handleDelete(id) {
+  deleteBookmark(id);
+  updateMeta();
+  renderBookmarks();
+  showToast('تم حذف الإشارة');
+}
+
+function clearAll() {
+  if (!confirm('هل تريد حذف جميع الإشارات المرجعية؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  updateMeta();
+  renderBookmarks();
+  dismissSuggestions();
+  showToast('تم مسح جميع الإشارات');
+}
+
+function handleSearch() {
+  searchQuery = document.getElementById('search-input').value;
+  document.getElementById('search-clear').classList.toggle('visible', searchQuery.length > 0);
+  renderBookmarks();
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  searchQuery = '';
+  document.getElementById('search-clear').classList.remove('visible');
+  renderBookmarks();
+}
+
+// ========================
+// TOAST
+// ========================
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ========================
+// INIT
+// ========================
+updateMeta();
+renderBookmarks();
+</script>
+</body>
+</html>
