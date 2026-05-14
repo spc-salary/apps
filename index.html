@@ -491,13 +491,15 @@
       .card-subtitle { font-size: 0.64rem; }
       .card-arrow   { width: 24px; height: 24px; }
       .card-arrow svg { width: 11px; height: 11px; }
-      .info-strip { flex-direction: column; border-radius: 18px; padding: 12px 18px; gap: 8px; }
-      .info-sep { width: 80px; height: 1px; }
+      .info-strip { flex-direction: row; flex-wrap: nowrap; border-radius: 100px; padding: 8px 14px; gap: 10px; justify-content: center; }
+      .info-item { font-size: 0.76rem; gap: 5px; }
+      .info-sep { width: 1px; height: 20px; }
       .footer-inner { justify-content: center; text-align: center; }
     }
     @media (max-width: 420px) {
       .logo-sub { display: none; }
-      .info-strip { width: 100%; }
+      .info-strip { width: 100%; padding: 8px 10px; gap: 8px; }
+      .info-item { font-size: 0.70rem; }
     }
     @media (min-width: 641px) and (max-width: 900px) {
       .cards-section { gap: 10px; }
