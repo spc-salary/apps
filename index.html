@@ -271,14 +271,15 @@
     .cards-section {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 16px;
       width: 100%;
-      max-width: 720px;
+      max-width: 680px;
     }
 
     .service-card {
       position: relative;
-      display: block;
+      display: flex;
+      flex-direction: column;
       text-decoration: none;
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -290,8 +291,7 @@
       transition:
         transform var(--transition),
         box-shadow var(--ease),
-        border-color var(--ease),
-        background var(--ease);
+        border-color var(--ease);
       cursor: pointer;
       animation: cardEnter 0.7s both;
     }
@@ -299,13 +299,12 @@
     .card-delay-1 { animation-delay: 0.50s; }
 
     .service-card:hover {
-      transform: translateY(-6px) scale(1.02);
+      transform: translateY(-8px) scale(1.02);
       box-shadow: var(--shadow-lg), var(--shadow-glow);
       border-color: var(--border-hov);
-      background: var(--bg-card-hov);
     }
     .service-card:active {
-      transform: translateY(-3px) scale(1.01);
+      transform: translateY(-4px) scale(1.01);
     }
 
     @keyframes cardEnter {
@@ -313,61 +312,102 @@
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .card-glow {
+    /* ── Shine sweep on hover ── */
+    .service-card::after {
+      content: '';
       position: absolute;
       inset: 0;
-      opacity: 0;
-      transition: opacity 0.4s ease;
+      background: linear-gradient(
+        120deg,
+        transparent 30%,
+        rgba(255,255,255,0.18) 50%,
+        transparent 70%
+      );
+      transform: translateX(100%);
+      transition: transform 0.55s ease;
+      pointer-events: none;
+      z-index: 10;
       border-radius: inherit;
+    }
+    .service-card:hover::after {
+      transform: translateX(-100%);
+    }
+
+    /* ── Card header zone (gradient banner) ── */
+    .card-header-zone {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 20px 24px;
+      overflow: hidden;
+    }
+    .card-delay-0 .card-header-zone {
+      background: linear-gradient(145deg, var(--salary-a) 0%, var(--salary-b) 100%);
+    }
+    .card-delay-1 .card-header-zone {
+      background: linear-gradient(145deg, var(--gas-a) 0%, var(--gas-b) 100%);
+    }
+
+    /* subtle inner pattern on header */
+    .card-header-zone::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.22) 0%, transparent 55%),
+        radial-gradient(circle at 10% 80%, rgba(255,255,255,0.12) 0%, transparent 45%);
       pointer-events: none;
     }
-    .salary-gradient.card-glow {
-      background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08));
-    }
-    .gas-gradient.card-glow {
-      background: linear-gradient(135deg, rgba(14,165,233,0.12), rgba(6,182,212,0.08));
-    }
-    .service-card:hover .card-glow { opacity: 1; }
 
-    /* ── Compact card inner ── */
-    .card-inner {
+    /* ── Icon in header ── */
+    .card-icon-wrap {
       position: relative;
-      padding: 16px 18px;
+      z-index: 1;
+      width: 64px; height: 64px;
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      background: rgba(255,255,255,0.20);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      backdrop-filter: blur(8px);
+      box-shadow:
+        0 8px 24px rgba(0,0,0,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.30);
+      transition: transform var(--transition), box-shadow var(--ease);
+      flex-shrink: 0;
+    }
+    .card-icon-wrap svg { width: 28px; height: 28px; }
+    .service-card:hover .card-icon-wrap {
+      transform: scale(1.12) rotate(-4deg);
+      box-shadow:
+        0 12px 32px rgba(0,0,0,0.24),
+        inset 0 1px 0 rgba(255,255,255,0.30);
+    }
+
+    /* ── Card content zone ── */
+    .card-content-zone {
+      flex: 1;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 16px 18px 14px;
       gap: 10px;
+      position: relative;
       z-index: 1;
     }
 
-    /* ── Smaller icon ── */
-    .card-icon-wrap {
-      width: 44px; height: 44px;
-      border-radius: var(--radius-icon);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff;
-      flex-shrink: 0;
-      transition: transform var(--transition);
-    }
-    .salary-gradient.card-icon-wrap {
-      background: linear-gradient(135deg, var(--salary-a), var(--salary-b));
-      box-shadow: 0 6px 18px rgba(99,102,241,0.38);
-    }
-    .gas-gradient.card-icon-wrap {
-      background: linear-gradient(135deg, var(--gas-a), var(--gas-b));
-      box-shadow: 0 6px 18px rgba(14,165,233,0.38);
-    }
-    .card-icon-wrap svg { width: 20px; height: 20px; }
-    .service-card:hover .card-icon-wrap { transform: scale(1.10) rotate(-3deg); }
-
-    .card-body { display: flex; flex-direction: column; gap: 3px; }
+    .card-body { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 
     .card-badge {
       display: inline-block;
       font-size: 0.60rem;
-      font-weight: 600;
-      padding: 2px 7px;
+      font-weight: 700;
+      padding: 2px 8px;
       border-radius: 100px;
       width: fit-content;
+      letter-spacing: 0.3px;
     }
     .card-delay-0 .card-badge {
       background: rgba(99,102,241,0.12);
@@ -379,7 +419,7 @@
     }
 
     .card-title {
-      font-size: clamp(1.0rem, 2.5vw, 1.18rem);
+      font-size: clamp(0.98rem, 2.4vw, 1.12rem);
       font-weight: 800;
       color: var(--fg);
       line-height: 1.35;
@@ -391,22 +431,50 @@
       line-height: 1.5;
     }
 
-    .card-arrow {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
+    /* ── Card footer row: divider + CTA ── */
+    .card-footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+      width: 100%;
+    }
+    .card-cta-label {
+      font-size: 0.68rem;
+      font-weight: 700;
       color: var(--fg-soft);
-      margin-top: 2px;
-      transition: transform var(--transition), background var(--ease), border-color var(--ease), color var(--ease);
+      transition: color var(--ease);
+    }
+    .card-delay-0:hover .card-cta-label { color: var(--salary-a); }
+    .card-delay-1:hover .card-cta-label { color: var(--gas-a); }
+
+    .card-arrow {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      transition: transform var(--transition), box-shadow var(--ease);
+      flex-shrink: 0;
+    }
+    .card-delay-0 .card-arrow {
+      background: linear-gradient(135deg, var(--salary-a), var(--salary-b));
+      box-shadow: 0 4px 12px rgba(99,102,241,0.40);
+    }
+    .card-delay-1 .card-arrow {
+      background: linear-gradient(135deg, var(--gas-a), var(--gas-b));
+      box-shadow: 0 4px 12px rgba(14,165,233,0.40);
     }
     .card-arrow svg { width: 13px; height: 13px; }
     .service-card:hover .card-arrow {
-      transform: translateX(-6px);
-      border-color: transparent;
+      transform: translateX(-5px) scale(1.08);
+      box-shadow: 0 6px 18px rgba(99,102,241,0.50);
     }
-    .card-delay-0:hover .card-arrow { background: var(--salary-a); color: #fff; }
-    .card-delay-1:hover .card-arrow { background: var(--gas-a); color: #fff; }
+    .card-delay-1:hover .card-arrow {
+      box-shadow: 0 6px 18px rgba(14,165,233,0.50);
+    }
 
     /* ─── Info strip ─────────────────────────────────── */
     .info-strip {
@@ -483,25 +551,27 @@
       .logo-sub    { font-size: 0.66rem; }
       .hero-section { gap: 10px; }
       .hero-desc { font-size: 0.88rem; }
-      .cards-section { grid-template-columns: 1fr; gap: 10px; max-width: 380px; }
-      .card-inner { padding: 14px 16px; gap: 8px; }
-      .card-icon-wrap { width: 38px; height: 38px; border-radius: 11px; }
-      .card-icon-wrap svg { width: 17px; height: 17px; }
+      .cards-section { grid-template-columns: 1fr; gap: 12px; max-width: 360px; }
+      .card-header-zone { padding: 22px 20px 18px; }
+      .card-icon-wrap { width: 56px; height: 56px; border-radius: 16px; }
+      .card-icon-wrap svg { width: 24px; height: 24px; }
+      .card-content-zone { padding: 14px 16px 12px; }
       .card-title   { font-size: 0.98rem; }
       .card-subtitle { font-size: 0.64rem; }
-      .card-arrow   { width: 24px; height: 24px; }
+      .card-arrow   { width: 26px; height: 26px; }
       .card-arrow svg { width: 11px; height: 11px; }
-      .info-strip { flex-direction: column; border-radius: 18px; padding: 12px 18px; gap: 8px; }
-      .info-sep { width: 80px; height: 1px; }
+      .info-strip { flex-direction: row; flex-wrap: nowrap; border-radius: 100px; padding: 8px 14px; gap: 10px; justify-content: center; }
+      .info-item { font-size: 0.76rem; gap: 5px; }
+      .info-sep { width: 1px; height: 20px; }
       .footer-inner { justify-content: center; text-align: center; }
     }
     @media (max-width: 420px) {
       .logo-sub { display: none; }
-      .info-strip { width: 100%; }
+      .info-strip { width: 100%; padding: 8px 10px; gap: 8px; }
+      .info-item { font-size: 0.70rem; }
     }
     @media (min-width: 641px) and (max-width: 900px) {
-      .cards-section { gap: 10px; }
-      .card-inner { padding: 16px 16px; }
+      .cards-section { gap: 14px; }
     }
 
     :focus-visible {
@@ -576,9 +646,8 @@
       <!-- بطاقة الرواتب -->
       <a href="https://spc-salary.github.io/salary/" target="_blank" rel="noopener noreferrer"
          class="service-card card-delay-0" aria-label="الانتقال إلى الاستعلام عن الرواتب">
-        <div class="card-glow salary-gradient"></div>
-        <div class="card-inner">
-          <div class="card-icon-wrap salary-gradient">
+        <div class="card-header-zone">
+          <div class="card-icon-wrap">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
               <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
@@ -586,16 +655,21 @@
               <line x1="10" y1="14" x2="14" y2="14"/>
             </svg>
           </div>
+        </div>
+        <div class="card-content-zone">
           <div class="card-body">
             <span class="card-badge">خدمة إلكترونية</span>
             <h2 class="card-title">الاستعلام عن الرواتب</h2>
             <p class="card-subtitle">تحقق من راتبك وبياناتك المالية</p>
           </div>
-          <div class="card-arrow" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"/>
-              <polyline points="12 19 5 12 12 5"/>
-            </svg>
+          <div class="card-footer-row">
+            <span class="card-cta-label">ادخل إلى الخدمة</span>
+            <div class="card-arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+              </svg>
+            </div>
           </div>
         </div>
       </a>
@@ -603,9 +677,8 @@
       <!-- بطاقة الغاز -->
       <a href="https://spc-salary.github.io/gaz/" target="_blank" rel="noopener noreferrer"
          class="service-card card-delay-1" aria-label="الانتقال إلى الاستعلام ونقل جرة الغاز">
-        <div class="card-glow gas-gradient"></div>
-        <div class="card-inner">
-          <div class="card-icon-wrap gas-gradient">
+        <div class="card-header-zone">
+          <div class="card-icon-wrap">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 2C8.5 2 6 4.5 6 8c0 2.5 1.5 4.5 3 6l1 2h4l1-2c1.5-1.5 3-3.5 3-6 0-3.5-2.5-6-6-6z"/>
               <path d="M9 16v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-2"/>
@@ -613,16 +686,21 @@
               <line x1="10" y1="8" x2="14" y2="8"/>
             </svg>
           </div>
+        </div>
+        <div class="card-content-zone">
           <div class="card-body">
             <span class="card-badge">منصة الغاز</span>
             <h2 class="card-title">الاستعلام ونقل جرة الغاز</h2>
             <p class="card-subtitle">استعلم عن مكان جرتك وانقل جرة الغاز بسهولة</p>
           </div>
-          <div class="card-arrow" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"/>
-              <polyline points="12 19 5 12 12 5"/>
-            </svg>
+          <div class="card-footer-row">
+            <span class="card-cta-label">ادخل إلى الخدمة</span>
+            <div class="card-arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+              </svg>
+            </div>
           </div>
         </div>
       </a>
