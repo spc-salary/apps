@@ -5,12 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>بوابة الخدمات الإلكترونية | مديرية غاز جنوب المنطقة الوسطى</title>
   <meta name="description" content="بوابة الخدمات الإلكترونية الموحدة - مديرية غاز جنوب المنطقة الوسطى" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
   <style>
     /* ─── Reset & base ─────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --font: system-ui, -apple-system, 'Segoe UI', 'Noto Sans Arabic', 'Arabic UI Text', Tahoma, Arial, sans-serif;
+      --font: 'Cairo', 'Tajawal', system-ui, sans-serif;
       --bg:          #f0f4ff;
       --bg-card:     rgba(255,255,255,0.82);
       --bg-card-hov: rgba(255,255,255,0.95);
@@ -275,14 +278,6 @@
       max-width: 720px;
     }
 
-    /* البطاقة الثالثة تمتد لتكون في المنتصف */
-    .service-card.card-delay-2 {
-      grid-column: 1 / -1;
-      max-width: 360px;
-      justify-self: center;
-      width: 100%;
-    }
-
     .service-card {
       position: relative;
       display: block;
@@ -304,7 +299,7 @@
     }
     .card-delay-0 { animation-delay: 0.35s; }
     .card-delay-1 { animation-delay: 0.50s; }
-    .card-delay-2 { animation-delay: 0.65s; }
+    .card-delay-2 { animation-delay: 0.65s; grid-column: 1 / -1; max-width: 354px; justify-self: center; width: 100%; }
 
     .service-card:hover {
       transform: translateY(-6px) scale(1.02);
@@ -321,7 +316,6 @@
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* ─── Card Glow ─── */
     .card-glow {
       position: absolute;
       inset: 0;
@@ -341,7 +335,7 @@
     }
     .service-card:hover .card-glow { opacity: 1; }
 
-    /* ─── Card Inner ─── */
+    /* ── Compact card inner ── */
     .card-inner {
       position: relative;
       padding: 16px 18px;
@@ -351,7 +345,7 @@
       z-index: 1;
     }
 
-    /* ─── Card Icon ─── */
+    /* ── Smaller icon ── */
     .card-icon-wrap {
       width: 44px; height: 44px;
       border-radius: var(--radius-icon);
@@ -377,7 +371,6 @@
 
     .card-body { display: flex; flex-direction: column; gap: 3px; }
 
-    /* ─── Card Badge ─── */
     .card-badge {
       display: inline-block;
       font-size: 0.60rem;
@@ -412,7 +405,6 @@
       line-height: 1.5;
     }
 
-    /* ─── Card Arrow ─── */
     .card-arrow {
       width: 28px; height: 28px;
       border-radius: 50%;
@@ -428,8 +420,8 @@
       border-color: transparent;
     }
     .card-delay-0:hover .card-arrow { background: var(--salary-a); color: #fff; }
-    .card-delay-1:hover .card-arrow { background: var(--gas-a);    color: #fff; }
-    .card-delay-2:hover .card-arrow { background: var(--tax-a);    color: #fff; }
+    .card-delay-1:hover .card-arrow { background: var(--gas-a); color: #fff; }
+    .card-delay-2:hover .card-arrow { background: var(--tax-a); color: #fff; }
 
     /* ─── Info strip ─────────────────────────────────── */
     .info-strip {
@@ -507,7 +499,7 @@
       .hero-section { gap: 10px; }
       .hero-desc { font-size: 0.88rem; }
       .cards-section { grid-template-columns: 1fr; gap: 10px; max-width: 380px; }
-      .service-card.card-delay-2 { grid-column: auto; max-width: 100%; }
+      .card-delay-2 { grid-column: auto; max-width: 100%; }
       .card-inner { padding: 14px 16px; gap: 8px; }
       .card-icon-wrap { width: 38px; height: 38px; border-radius: 11px; }
       .card-icon-wrap svg { width: 17px; height: 17px; }
@@ -754,7 +746,7 @@
 
   /* ── Footer year ───────────────────────────── */
   document.getElementById('footerYear').textContent =
-    '© ' + new Date().getFullYear() + ' مديرية غاز جنوب المنطقة الوسطى';
+    '© ' + new Date().getFullYear() + 'مديرية غاز جنوب المنطقة الوسطى ';
 
   /* ── Ripple effect on card click ───────────── */
   document.querySelectorAll('.service-card').forEach(card => {
