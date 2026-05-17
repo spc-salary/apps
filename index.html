@@ -5,15 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>بوابة الخدمات الإلكترونية | مديرية غاز جنوب المنطقة الوسطى</title>
   <meta name="description" content="بوابة الخدمات الإلكترونية الموحدة - مديرية غاز جنوب المنطقة الوسطى" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
   <style>
     /* ─── Reset & base ─────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --font: 'Cairo', 'Tajawal', system-ui, sans-serif;
+      --font: system-ui, -apple-system, 'Segoe UI', 'Noto Sans Arabic', 'Arabic UI Text', Tahoma, Arial, sans-serif;
       --bg:          #f0f4ff;
       --bg-card:     rgba(255,255,255,0.82);
       --bg-card-hov: rgba(255,255,255,0.95);
@@ -31,6 +28,8 @@
       --salary-b:   #8b5cf6;
       --gas-a:      #0ea5e9;
       --gas-b:      #06b6d4;
+      --tax-a:      #10b981;
+      --tax-b:      #059669;
       --radius-card: 20px;
       --radius-icon: 14px;
       --header-h:    72px;
@@ -276,6 +275,14 @@
       max-width: 720px;
     }
 
+    /* البطاقة الثالثة تمتد لتكون في المنتصف */
+    .service-card.card-delay-2 {
+      grid-column: 1 / -1;
+      max-width: 360px;
+      justify-self: center;
+      width: 100%;
+    }
+
     .service-card {
       position: relative;
       display: block;
@@ -297,6 +304,7 @@
     }
     .card-delay-0 { animation-delay: 0.35s; }
     .card-delay-1 { animation-delay: 0.50s; }
+    .card-delay-2 { animation-delay: 0.65s; }
 
     .service-card:hover {
       transform: translateY(-6px) scale(1.02);
@@ -313,6 +321,7 @@
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
+    /* ─── Card Glow ─── */
     .card-glow {
       position: absolute;
       inset: 0;
@@ -327,9 +336,12 @@
     .gas-gradient.card-glow {
       background: linear-gradient(135deg, rgba(14,165,233,0.12), rgba(6,182,212,0.08));
     }
+    .tax-gradient.card-glow {
+      background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.08));
+    }
     .service-card:hover .card-glow { opacity: 1; }
 
-    /* ── Compact card inner ── */
+    /* ─── Card Inner ─── */
     .card-inner {
       position: relative;
       padding: 16px 18px;
@@ -339,7 +351,7 @@
       z-index: 1;
     }
 
-    /* ── Smaller icon ── */
+    /* ─── Card Icon ─── */
     .card-icon-wrap {
       width: 44px; height: 44px;
       border-radius: var(--radius-icon);
@@ -356,11 +368,16 @@
       background: linear-gradient(135deg, var(--gas-a), var(--gas-b));
       box-shadow: 0 6px 18px rgba(14,165,233,0.38);
     }
+    .tax-gradient.card-icon-wrap {
+      background: linear-gradient(135deg, var(--tax-a), var(--tax-b));
+      box-shadow: 0 6px 18px rgba(16,185,129,0.38);
+    }
     .card-icon-wrap svg { width: 20px; height: 20px; }
     .service-card:hover .card-icon-wrap { transform: scale(1.10) rotate(-3deg); }
 
     .card-body { display: flex; flex-direction: column; gap: 3px; }
 
+    /* ─── Card Badge ─── */
     .card-badge {
       display: inline-block;
       font-size: 0.60rem;
@@ -377,6 +394,10 @@
       background: rgba(14,165,233,0.12);
       color: var(--gas-a);
     }
+    .card-delay-2 .card-badge {
+      background: rgba(16,185,129,0.12);
+      color: var(--tax-a);
+    }
 
     .card-title {
       font-size: clamp(1.0rem, 2.5vw, 1.18rem);
@@ -391,6 +412,7 @@
       line-height: 1.5;
     }
 
+    /* ─── Card Arrow ─── */
     .card-arrow {
       width: 28px; height: 28px;
       border-radius: 50%;
@@ -406,7 +428,8 @@
       border-color: transparent;
     }
     .card-delay-0:hover .card-arrow { background: var(--salary-a); color: #fff; }
-    .card-delay-1:hover .card-arrow { background: var(--gas-a); color: #fff; }
+    .card-delay-1:hover .card-arrow { background: var(--gas-a);    color: #fff; }
+    .card-delay-2:hover .card-arrow { background: var(--tax-a);    color: #fff; }
 
     /* ─── Info strip ─────────────────────────────────── */
     .info-strip {
@@ -484,6 +507,7 @@
       .hero-section { gap: 10px; }
       .hero-desc { font-size: 0.88rem; }
       .cards-section { grid-template-columns: 1fr; gap: 10px; max-width: 380px; }
+      .service-card.card-delay-2 { grid-column: auto; max-width: 100%; }
       .card-inner { padding: 14px 16px; gap: 8px; }
       .card-icon-wrap { width: 38px; height: 38px; border-radius: 11px; }
       .card-icon-wrap svg { width: 17px; height: 17px; }
@@ -627,6 +651,34 @@
         </div>
       </a>
 
+      <!-- بطاقة حاسبة الضريبة -->
+      <a href="https://spc-salary.github.io/tax/" target="_blank" rel="noopener noreferrer"
+         class="service-card card-delay-2" aria-label="الانتقال إلى حاسبة الضريبة">
+        <div class="card-glow tax-gradient"></div>
+        <div class="card-inner">
+          <div class="card-icon-wrap tax-gradient">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="2" width="16" height="20" rx="2" ry="2"/>
+              <line x1="8" y1="6" x2="16" y2="6"/>
+              <line x1="8" y1="10" x2="16" y2="10"/>
+              <line x1="8" y1="14" x2="12" y2="14"/>
+              <path d="M14 17l2 2 4-4"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <span class="card-badge">حاسبة ضريبية</span>
+            <h2 class="card-title">حاسبة الضريبة</h2>
+            <p class="card-subtitle">حساب الضريبة بشكل سريع ودقيق مع واجهة سهلة وحديثة</p>
+          </div>
+          <div class="card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"/>
+              <polyline points="12 19 5 12 12 5"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
     </section>
 
     <!-- شريط المعلومات -->
@@ -702,7 +754,7 @@
 
   /* ── Footer year ───────────────────────────── */
   document.getElementById('footerYear').textContent =
-    '© ' + new Date().getFullYear() + 'مديرية غاز جنوب المنطقة الوسطى ';
+    '© ' + new Date().getFullYear() + ' مديرية غاز جنوب المنطقة الوسطى';
 
   /* ── Ripple effect on card click ───────────── */
   document.querySelectorAll('.service-card').forEach(card => {
@@ -731,24 +783,3 @@
 
 </body>
 </html>
-<!-- BEGIN AADS AD UNIT 2437850 -->
-
-<div style="position: absolute; z-index: 99999">
-      <input autocomplete="off" type="checkbox" id="aadsstickymp8lsglb" hidden />
-      <div style="padding-top: 0; padding-bottom: 50px;">
-        <div style="width:320px;height:50px;position:fixed;text-align:center;font-size:0;bottom:0;left:0;right:0;margin:auto">
-          <label for="aadsstickymp8lsglb" style="top: -24px; right: 0;; position: absolute;border-radius: 4px; background: rgba(248, 248, 249, 0.70); padding: 4px;z-index: 99999;cursor:pointer">
-            <svg fill="#000000" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490">
-              <polygon points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "/>
-            </svg>
-          </label>
-          <div id="frame" style="width: 320px;margin: auto;z-index: 99998;height: auto"><iframe data-aa=2437850 src=//ad.a-ads.com/2437850/?size=320x50 style='border:0; padding:0; width:320px; height:50px; overflow:hidden; margin: auto'></iframe></div>
-        </div>
-        <style>
-      #aadsstickymp8lsglb:checked + div {
-        display: none;
-      }
-    </style>
-    </div></div>
-
-<!-- END AADS AD UNIT 2437850 -->
