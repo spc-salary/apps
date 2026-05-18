@@ -33,6 +33,8 @@
       --gas-b:      #06b6d4;
       --tax-a:      #10b981;
       --tax-b:      #059669;
+      --ot-a:       #f59e0b;
+      --ot-b:       #d97706;
       --radius-card: 20px;
       --radius-icon: 14px;
       --header-h:    72px;
@@ -300,6 +302,7 @@
     .card-delay-0 { animation-delay: 0.35s; }
     .card-delay-1 { animation-delay: 0.50s; }
     .card-delay-2 { animation-delay: 0.65s; grid-column: 1 / -1; max-width: 354px; justify-self: center; width: 100%; }
+    .card-delay-3 { animation-delay: 0.80s; grid-column: 1 / -1; max-width: 354px; justify-self: center; width: 100%; }
 
     .service-card:hover {
       transform: translateY(-6px) scale(1.02);
@@ -332,6 +335,9 @@
     }
     .tax-gradient.card-glow {
       background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.08));
+    }
+    .ot-gradient.card-glow {
+      background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.08));
     }
     .service-card:hover .card-glow { opacity: 1; }
 
@@ -366,6 +372,10 @@
       background: linear-gradient(135deg, var(--tax-a), var(--tax-b));
       box-shadow: 0 6px 18px rgba(16,185,129,0.38);
     }
+    .ot-gradient.card-icon-wrap {
+      background: linear-gradient(135deg, var(--ot-a), var(--ot-b));
+      box-shadow: 0 6px 18px rgba(245,158,11,0.38);
+    }
     .card-icon-wrap svg { width: 20px; height: 20px; }
     .service-card:hover .card-icon-wrap { transform: scale(1.10) rotate(-3deg); }
 
@@ -390,6 +400,10 @@
     .card-delay-2 .card-badge {
       background: rgba(16,185,129,0.12);
       color: var(--tax-a);
+    }
+    .card-delay-3 .card-badge {
+      background: rgba(245,158,11,0.12);
+      color: var(--ot-a);
     }
 
     .card-title {
@@ -422,6 +436,7 @@
     .card-delay-0:hover .card-arrow { background: var(--salary-a); color: #fff; }
     .card-delay-1:hover .card-arrow { background: var(--gas-a); color: #fff; }
     .card-delay-2:hover .card-arrow { background: var(--tax-a); color: #fff; }
+    .card-delay-3:hover .card-arrow { background: var(--ot-a); color: #fff; }
 
     /* ─── Info strip ─────────────────────────────────── */
     .info-strip {
@@ -500,6 +515,7 @@
       .hero-desc { font-size: 0.88rem; }
       .cards-section { grid-template-columns: 1fr; gap: 10px; max-width: 380px; }
       .card-delay-2 { grid-column: auto; max-width: 100%; }
+      .card-delay-3 { grid-column: auto; max-width: 100%; }
       .card-inner { padding: 14px 16px; gap: 8px; }
       .card-icon-wrap { width: 38px; height: 38px; border-radius: 11px; }
       .card-icon-wrap svg { width: 17px; height: 17px; }
@@ -661,6 +677,33 @@
             <span class="card-badge">حاسبة ضريبية</span>
             <h2 class="card-title">حاسبة الضريبة</h2>
             <p class="card-subtitle">حساب الضريبة بشكل سريع ودقيق مع واجهة سهلة وحديثة</p>
+          </div>
+          <div class="card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"/>
+              <polyline points="12 19 5 12 12 5"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- بطاقة حساب ساعات الإضافي -->
+      <a href="https://spc-salary.github.io/overtime/" target="_blank" rel="noopener noreferrer"
+         class="service-card card-delay-3" aria-label="الانتقال إلى حساب ساعات الإضافي">
+        <div class="card-glow ot-gradient"></div>
+        <div class="card-inner">
+          <div class="card-icon-wrap ot-gradient">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+              <line x1="12" y1="2" x2="12" y2="4"/>
+              <line x1="19.07" y1="4.93" x2="17.66" y2="6.34"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <span class="card-badge">حاسبة الإضافي</span>
+            <h2 class="card-title">حساب ساعات الإضافي</h2>
+            <p class="card-subtitle">احسب ساعات العمل الإضافية بدقة واحترافية مع تفاصيل الحساب خطوة بخطوة</p>
           </div>
           <div class="card-arrow" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
