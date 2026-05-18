@@ -498,7 +498,7 @@
     }
     .footer-dev strong { color: var(--fg-soft); font-weight: 700; }
 
-    /* ─── Animations ─────────────────────────────────── */
+    /* ─── Animations ─────────────────────────────────���─ */
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -535,6 +535,77 @@
       .cards-section { gap: 10px; }
       .card-inner { padding: 16px 16px; }
     }
+
+    /* ─── Search ─────────────────────────────────────── */
+    .search-wrap {
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      animation: slideUp 0.7s 0.30s both;
+    }
+    .search-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--fg-muted);
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+    .search-input {
+      width: 100%;
+      padding: 11px 42px 11px 40px;
+      font-family: var(--font);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--fg);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-sm);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      direction: rtl;
+      appearance: none;
+    }
+    .search-input::placeholder { color: var(--fg-muted); font-weight: 400; }
+    .search-input:focus {
+      border-color: var(--salary-a);
+      box-shadow: var(--shadow-sm), 0 0 0 3px rgba(99,102,241,0.13);
+      background: var(--bg-card-hov);
+    }
+    .search-input:focus ~ .search-icon { color: var(--salary-a); }
+    .search-clear {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: none;
+      background: var(--fg-muted);
+      color: #fff;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.65rem;
+      transition: background 0.2s, transform 0.2s;
+      padding: 0;
+    }
+    .search-clear:hover { background: var(--salary-a); transform: translateY(-50%) scale(1.1); }
+    .search-clear.visible { display: flex; }
+    .no-results {
+      display: none;
+      text-align: center;
+      padding: 28px 0 8px;
+      font-size: 0.88rem;
+      color: var(--fg-muted);
+      animation: slideUp 0.3s both;
+    }
+    .no-results.visible { display: block; }
 
     :focus-visible {
       outline: 2px solid var(--salary-a);
@@ -602,8 +673,17 @@
       </p>
     </section>
 
+    <!-- حقل البحث -->
+    <div class="search-wrap">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="ابحث عن خدمة..." autocomplete="off" />
+      <button class="search-clear" id="searchClear" aria-label="مسح البحث">✕</button>
+    </div>
+
     <!-- البطاقات -->
-    <section class="cards-section">
+    <section class="cards-section" id="cardsSection">
 
       <!-- بطاقة الرواتب -->
       <a href="https://spc-salary.github.io/salary/" target="_blank" rel="noopener noreferrer"
@@ -715,6 +795,7 @@
       </a>
 
     </section>
+    <p class="no-results" id="noResults">لا توجد نتائج مطابقة لـ "<span id="noResultsQuery"></span>"</p>
 
     <!-- شريط المعلومات -->
     <section class="info-strip">
@@ -789,7 +870,7 @@
 
   /* ── Footer year ───────────────────────────── */
   document.getElementById('footerYear').textContent =
-    '© ' + new Date().getFullYear() + 'مديرية غاز جنوب المنطقة الوسطى ';
+    '© ' + new Date().getFullYear() + 'مديرية غاز جنوب الم��طقة الوسطى ';
 
   /* ── Ripple effect on card click ───────────── */
   document.querySelectorAll('.service-card').forEach(card => {
@@ -814,6 +895,36 @@
   const s = document.createElement('style');
   s.textContent = `@keyframes rippleAnim { to { transform: scale(1); opacity: 0; } }`;
   document.head.appendChild(s);
+
+  /* ── Search / filter ───────────────────────── */
+  const searchInput  = document.getElementById('searchInput');
+  const searchClear  = document.getElementById('searchClear');
+  const noResults    = document.getElementById('noResults');
+  const noResultsQ   = document.getElementById('noResultsQuery');
+  const cards        = document.querySelectorAll('.service-card');
+
+  function filterCards() {
+    const q = searchInput.value.trim();
+    searchClear.classList.toggle('visible', q.length > 0);
+    let visible = 0;
+    cards.forEach(card => {
+      const title    = card.querySelector('.card-title')?.textContent   || '';
+      const subtitle = card.querySelector('.card-subtitle')?.textContent || '';
+      const badge    = card.querySelector('.card-badge')?.textContent    || '';
+      const match    = !q || (title + subtitle + badge).includes(q);
+      card.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    noResultsQ.textContent = q;
+    noResults.classList.toggle('visible', visible === 0 && q.length > 0);
+  }
+
+  searchInput.addEventListener('input', filterCards);
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    filterCards();
+    searchInput.focus();
+  });
 </script>
 
 </body>
