@@ -14,10 +14,10 @@
 
     :root {
       --font: 'Cairo', 'Tajawal', system-ui, sans-serif;
-      --bg:          #edf0f7;
-      --bg-card:     rgba(255,255,255,0.90);
-      --bg-card-hov: rgba(255,255,255,1);
-      --bg-header:   rgba(237,240,247,0.85);
+      --bg:          #f0f4ff;
+      --bg-card:     rgba(255,255,255,0.82);
+      --bg-card-hov: rgba(255,255,255,0.95);
+      --bg-header:   rgba(255,255,255,0.72);
       --fg:          #0f172a;
       --fg-soft:     #475569;
       --fg-muted:    #94a3b8;
@@ -40,31 +40,13 @@
       --header-h:    72px;
       --transition:  0.35s cubic-bezier(0.34,1.56,0.64,1);
       --ease:        0.25s ease;
-
-      /* ─── 3-D card shadows (light mode) ────────────── */
-      --card-bg:        #ffffff;
-      --card-depth-1:   #d8dce8;
-      --card-depth-2:   #c4c9d8;
-      --card-depth-3:   #b0b6c8;
-      --card-3d:
-        3px  3px 0 var(--card-depth-1),
-        6px  6px 0 var(--card-depth-2),
-        9px  9px 0 var(--card-depth-3),
-        12px 18px 32px rgba(15,23,42,0.14);
-      --card-3d-hover:
-        6px  6px 0 var(--card-depth-1),
-        12px 12px 0 var(--card-depth-2),
-        18px 18px 0 var(--card-depth-3),
-        22px 28px 44px rgba(15,23,42,0.18);
-      --btn-3d:   2px 2px 0 var(--card-depth-2), 4px 4px 0 var(--card-depth-3), 6px 8px 12px rgba(15,23,42,0.10);
-      --btn-3d-h: inset 2px 2px 6px rgba(15,23,42,0.12);
     }
 
     html.dark {
-      --bg:          #111827;
-      --bg-card:     rgba(30,34,53,0.92);
-      --bg-card-hov: rgba(30,34,53,1);
-      --bg-header:   rgba(17,24,39,0.85);
+      --bg:          #0b1120;
+      --bg-card:     rgba(15,23,42,0.82);
+      --bg-card-hov: rgba(20,30,55,0.95);
+      --bg-header:   rgba(8,14,30,0.78);
       --fg:          #f1f5f9;
       --fg-soft:     #94a3b8;
       --fg-muted:    #475569;
@@ -74,24 +56,6 @@
       --shadow-md:   0 8px 32px rgba(0,0,0,0.40);
       --shadow-lg:   0 20px 60px rgba(0,0,0,0.55);
       --shadow-glow: 0 0 80px rgba(99,102,241,0.25);
-
-      /* ─── 3-D card shadows (dark mode) ─────────────── */
-      --card-bg:        #1e2235;
-      --card-depth-1:   #141828;
-      --card-depth-2:   #0e1120;
-      --card-depth-3:   #080b18;
-      --card-3d:
-        3px  3px 0 var(--card-depth-1),
-        6px  6px 0 var(--card-depth-2),
-        9px  9px 0 var(--card-depth-3),
-        12px 18px 32px rgba(0,0,0,0.50);
-      --card-3d-hover:
-        6px  6px 0 var(--card-depth-1),
-        12px 12px 0 var(--card-depth-2),
-        18px 18px 0 var(--card-depth-3),
-        22px 28px 44px rgba(0,0,0,0.60);
-      --btn-3d:   2px 2px 0 var(--card-depth-2), 4px 4px 0 var(--card-depth-3), 6px 8px 12px rgba(0,0,0,0.35);
-      --btn-3d-h: inset 2px 2px 6px rgba(0,0,0,0.40);
     }
 
     html {
@@ -311,53 +275,43 @@
     .cards-section {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      gap: 12px;
       width: 100%;
       max-width: 720px;
     }
 
-    /* ── 3-D white service card ── */
     .service-card {
       position: relative;
       display: block;
       text-decoration: none;
-      background: var(--card-bg);
-      border: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       border-radius: var(--radius-card);
-      box-shadow: var(--card-3d);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      box-shadow: var(--shadow-md);
       overflow: hidden;
-      cursor: pointer;
       transition:
-        box-shadow 0.4s ease,
-        transform  0.4s ease;
+        transform var(--transition),
+        box-shadow var(--ease),
+        border-color var(--ease),
+        background var(--ease);
+      cursor: pointer;
       animation: cardEnter 0.7s both;
     }
     .card-delay-0 { animation-delay: 0.35s; }
     .card-delay-1 { animation-delay: 0.50s; }
-    .card-delay-2 {
-      animation-delay: 0.65s;
-      grid-column: 1 / -1;
-      max-width: 354px;
-      justify-self: center;
-      width: 100%;
-    }
-    .card-delay-3 {
-      animation-delay: 0.80s;
-      grid-column: 1 / -1;
-      max-width: 354px;
-      justify-self: center;
-      width: 100%;
-    }
+    .card-delay-2 { animation-delay: 0.65s; grid-column: 1 / -1; max-width: 354px; justify-self: center; width: 100%; }
+    .card-delay-3 { animation-delay: 0.80s; grid-column: 1 / -1; max-width: 354px; justify-self: center; width: 100%; }
 
-    /* card lifts up and casts bigger 3-D shadow on hover */
     .service-card:hover {
-      transform: translate(-4px, -4px);
-      box-shadow: var(--card-3d-hover);
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      border-color: var(--border-hov);
+      background: var(--bg-card-hov);
     }
-
     .service-card:active {
-      transform: translate(-1px, -1px);
-      box-shadow: var(--card-3d);
+      transform: translateY(-3px) scale(1.01);
     }
 
     @keyframes cardEnter {
@@ -365,92 +319,73 @@
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* glow overlay – kept for smooth color accent on hover */
     .card-glow {
       position: absolute;
       inset: 0;
       opacity: 0;
-      transition: opacity 1s ease;
+      transition: opacity 0.4s ease;
       border-radius: inherit;
       pointer-events: none;
     }
     .salary-gradient.card-glow {
-      background: linear-gradient(135deg, rgba(99,102,241,0.10), rgba(139,92,246,0.06));
+      background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08));
     }
     .gas-gradient.card-glow {
-      background: linear-gradient(135deg, rgba(14,165,233,0.10), rgba(6,182,212,0.06));
+      background: linear-gradient(135deg, rgba(14,165,233,0.12), rgba(6,182,212,0.08));
     }
     .tax-gradient.card-glow {
-      background: linear-gradient(135deg, rgba(16,185,129,0.10), rgba(5,150,105,0.06));
+      background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.08));
     }
     .ot-gradient.card-glow {
-      background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(217,119,6,0.06));
+      background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.08));
     }
     .service-card:hover .card-glow { opacity: 1; }
 
-    /* ── Card inner ── */
+    /* ── Compact card inner ── */
     .card-inner {
       position: relative;
-      padding: 24px 22px 20px;
+      padding: 16px 18px;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      gap: 14px;
+      gap: 10px;
       z-index: 1;
     }
 
-    /* ── Icon – neumorphic raised circle ── */
+    /* ── Smaller icon ── */
     .card-icon-wrap {
-      width: 56px; height: 56px;
-      border-radius: 16px;
+      width: 44px; height: 44px;
+      border-radius: var(--radius-icon);
       display: flex; align-items: center; justify-content: center;
       color: #fff;
       flex-shrink: 0;
-      transition: transform 1s ease, box-shadow 1s ease;
+      transition: transform var(--transition);
     }
     .salary-gradient.card-icon-wrap {
       background: linear-gradient(135deg, var(--salary-a), var(--salary-b));
-      box-shadow: -6px -6px 14px rgba(99,102,241,0.25), 6px 6px 14px rgba(99,102,241,0.45);
+      box-shadow: 0 6px 18px rgba(99,102,241,0.38);
     }
     .gas-gradient.card-icon-wrap {
       background: linear-gradient(135deg, var(--gas-a), var(--gas-b));
-      box-shadow: -6px -6px 14px rgba(14,165,233,0.25), 6px 6px 14px rgba(14,165,233,0.45);
+      box-shadow: 0 6px 18px rgba(14,165,233,0.38);
     }
     .tax-gradient.card-icon-wrap {
       background: linear-gradient(135deg, var(--tax-a), var(--tax-b));
-      box-shadow: -6px -6px 14px rgba(16,185,129,0.25), 6px 6px 14px rgba(16,185,129,0.45);
+      box-shadow: 0 6px 18px rgba(16,185,129,0.38);
     }
     .ot-gradient.card-icon-wrap {
       background: linear-gradient(135deg, var(--ot-a), var(--ot-b));
-      box-shadow: -6px -6px 14px rgba(245,158,11,0.25), 6px 6px 14px rgba(245,158,11,0.45);
+      box-shadow: 0 6px 18px rgba(245,158,11,0.38);
     }
-    .card-icon-wrap svg { width: 26px; height: 26px; }
+    .card-icon-wrap svg { width: 20px; height: 20px; }
+    .service-card:hover .card-icon-wrap { transform: scale(1.10) rotate(-3deg); }
 
-    /* icon presses in on hover */
-    .service-card:hover .salary-gradient.card-icon-wrap {
-      transform: scale(1.06);
-      box-shadow: inset -4px -4px 10px rgba(99,102,241,0.25), inset 4px 4px 10px rgba(99,102,241,0.50);
-    }
-    .service-card:hover .gas-gradient.card-icon-wrap {
-      transform: scale(1.06);
-      box-shadow: inset -4px -4px 10px rgba(14,165,233,0.25), inset 4px 4px 10px rgba(14,165,233,0.50);
-    }
-    .service-card:hover .tax-gradient.card-icon-wrap {
-      transform: scale(1.06);
-      box-shadow: inset -4px -4px 10px rgba(16,185,129,0.25), inset 4px 4px 10px rgba(16,185,129,0.50);
-    }
-    .service-card:hover .ot-gradient.card-icon-wrap {
-      transform: scale(1.06);
-      box-shadow: inset -4px -4px 10px rgba(245,158,11,0.25), inset 4px 4px 10px rgba(245,158,11,0.50);
-    }
-
-    .card-body { display: flex; flex-direction: column; gap: 4px; }
+    .card-body { display: flex; flex-direction: column; gap: 3px; }
 
     .card-badge {
       display: inline-block;
-      font-size: 0.62rem;
+      font-size: 0.60rem;
       font-weight: 600;
-      padding: 3px 10px;
+      padding: 2px 7px;
       border-radius: 100px;
       width: fit-content;
     }
@@ -479,34 +414,29 @@
       letter-spacing: -0.2px;
     }
     .card-subtitle {
-      font-size: 0.70rem;
+      font-size: 0.68rem;
       color: var(--fg-soft);
       line-height: 1.5;
     }
 
-    /* ── Arrow button – 3-D pill ── */
     .card-arrow {
-      width: 36px; height: 36px;
+      width: 28px; height: 28px;
       border-radius: 50%;
-      border: none;
-      background: var(--card-bg);
-      box-shadow: var(--btn-3d);
+      border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
       color: var(--fg-soft);
       margin-top: 2px;
-      transition: box-shadow 0.35s ease, background 0.35s ease, color 0.25s ease, transform 0.35s ease;
+      transition: transform var(--transition), background var(--ease), border-color var(--ease), color var(--ease);
     }
-    .card-arrow svg { width: 14px; height: 14px; }
-
-    /* arrow sinks + fills with brand color on hover */
+    .card-arrow svg { width: 13px; height: 13px; }
     .service-card:hover .card-arrow {
-      box-shadow: var(--btn-3d-h);
-      transform: translateX(-4px);
+      transform: translateX(-6px);
+      border-color: transparent;
     }
     .card-delay-0:hover .card-arrow { background: var(--salary-a); color: #fff; }
-    .card-delay-1:hover .card-arrow { background: var(--gas-a);    color: #fff; }
-    .card-delay-2:hover .card-arrow { background: var(--tax-a);    color: #fff; }
-    .card-delay-3:hover .card-arrow { background: var(--ot-a);     color: #fff; }
+    .card-delay-1:hover .card-arrow { background: var(--gas-a); color: #fff; }
+    .card-delay-2:hover .card-arrow { background: var(--tax-a); color: #fff; }
+    .card-delay-3:hover .card-arrow { background: var(--ot-a); color: #fff; }
 
     /* ─── Info strip ─────────────────────────────────── */
     .info-strip {
@@ -568,7 +498,7 @@
     }
     .footer-dev strong { color: var(--fg-soft); font-weight: 700; }
 
-    /* ─── Animations ──────────────────────────────────── */
+    /* ─── Animations ─────────────────────────────────���─ */
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -583,16 +513,16 @@
       .logo-sub    { font-size: 0.66rem; }
       .hero-section { gap: 10px; }
       .hero-desc { font-size: 0.88rem; }
-      .cards-section { grid-template-columns: 1fr; gap: 14px; max-width: 380px; }
+      .cards-section { grid-template-columns: 1fr; gap: 10px; max-width: 380px; }
       .card-delay-2 { grid-column: auto; max-width: 100%; }
       .card-delay-3 { grid-column: auto; max-width: 100%; }
-      .card-inner { padding: 18px 18px 16px; gap: 12px; }
-      .card-icon-wrap { width: 48px; height: 48px; border-radius: 13px; }
-      .card-icon-wrap svg { width: 22px; height: 22px; }
+      .card-inner { padding: 14px 16px; gap: 8px; }
+      .card-icon-wrap { width: 38px; height: 38px; border-radius: 11px; }
+      .card-icon-wrap svg { width: 17px; height: 17px; }
       .card-title   { font-size: 0.98rem; }
-      .card-subtitle { font-size: 0.66rem; }
-      .card-arrow   { width: 32px; height: 32px; }
-      .card-arrow svg { width: 12px; height: 12px; }
+      .card-subtitle { font-size: 0.64rem; }
+      .card-arrow   { width: 24px; height: 24px; }
+      .card-arrow svg { width: 11px; height: 11px; }
       .info-strip { flex-direction: column; border-radius: 18px; padding: 12px 18px; gap: 8px; }
       .info-sep { width: 80px; height: 1px; }
       .footer-inner { justify-content: center; text-align: center; }
@@ -602,8 +532,8 @@
       .info-strip { width: 100%; }
     }
     @media (min-width: 641px) and (max-width: 900px) {
-      .cards-section { gap: 12px; }
-      .card-inner { padding: 20px 18px 18px; }
+      .cards-section { gap: 10px; }
+      .card-inner { padding: 16px 16px; }
     }
 
     /* ─── Search ─────────────────────────────────────── */
@@ -629,18 +559,22 @@
       font-size: 0.88rem;
       font-weight: 500;
       color: var(--fg);
-      background: var(--card-bg);
-      border: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       border-radius: 100px;
-      box-shadow: var(--btn-3d);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-sm);
       outline: none;
-      transition: box-shadow 0.35s ease;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
       direction: rtl;
       appearance: none;
     }
     .search-input::placeholder { color: var(--fg-muted); font-weight: 400; }
     .search-input:focus {
-      box-shadow: var(--btn-3d-h), 0 0 0 3px rgba(99,102,241,0.13);
+      border-color: var(--salary-a);
+      box-shadow: var(--shadow-sm), 0 0 0 3px rgba(99,102,241,0.13);
+      background: var(--bg-card-hov);
     }
     .search-input:focus ~ .search-icon { color: var(--salary-a); }
     .search-clear {
