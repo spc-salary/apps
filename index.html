@@ -40,6 +40,15 @@
       --header-h:    72px;
       --transition:  0.35s cubic-bezier(0.34,1.56,0.64,1);
       --ease:        0.25s ease;
+
+      /* ─── Neumorphism shadows (light mode) ─────────── */
+      --neu-bg:       #f0f4ff;
+      --neu-light:    #ffffff;
+      --neu-dark:     #c8cedf;
+      --neu-shadow:   -13px -13px 26px var(--neu-light), 13px 13px 26px var(--neu-dark);
+      --neu-inset:    inset -13px -10px 20px var(--neu-light), inset 13px 10px 20px var(--neu-dark);
+      --neu-btn:      -6px -6px 12px var(--neu-light), 6px 6px 12px var(--neu-dark);
+      --neu-btn-in:   inset -6px -6px 12px var(--neu-light), inset 6px 6px 12px var(--neu-dark);
     }
 
     html.dark {
@@ -56,6 +65,15 @@
       --shadow-md:   0 8px 32px rgba(0,0,0,0.40);
       --shadow-lg:   0 20px 60px rgba(0,0,0,0.55);
       --shadow-glow: 0 0 80px rgba(99,102,241,0.25);
+
+      /* ─── Neumorphism shadows (dark mode) ──────────── */
+      --neu-bg:       #0b1120;
+      --neu-light:    #101d38;
+      --neu-dark:     #060810;
+      --neu-shadow:   -13px -13px 26px var(--neu-light), 13px 13px 26px var(--neu-dark);
+      --neu-inset:    inset -13px -10px 20px var(--neu-light), inset 13px 10px 20px var(--neu-dark);
+      --neu-btn:      -6px -6px 12px var(--neu-light), 6px 6px 12px var(--neu-dark);
+      --neu-btn-in:   inset -6px -6px 12px var(--neu-light), inset 6px 6px 12px var(--neu-dark);
     }
 
     html {
@@ -275,117 +293,152 @@
     .cards-section {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 16px;
       width: 100%;
       max-width: 720px;
     }
 
+    /* ── Neumorphic service card ── */
     .service-card {
       position: relative;
       display: block;
       text-decoration: none;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      background: var(--neu-bg);
+      border: none;
       border-radius: var(--radius-card);
-      backdrop-filter: blur(16px) saturate(160%);
-      -webkit-backdrop-filter: blur(16px) saturate(160%);
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--neu-shadow);
       overflow: hidden;
-      transition:
-        transform var(--transition),
-        box-shadow var(--ease),
-        border-color var(--ease),
-        background var(--ease);
       cursor: pointer;
+      transition:
+        background 1s ease,
+        box-shadow 1s ease,
+        transform 1s ease;
       animation: cardEnter 0.7s both;
     }
     .card-delay-0 { animation-delay: 0.35s; }
     .card-delay-1 { animation-delay: 0.50s; }
-    .card-delay-2 { animation-delay: 0.65s; grid-column: 1 / -1; max-width: 354px; justify-self: center; width: 100%; }
-    .card-delay-3 { animation-delay: 0.80s; grid-column: 1 / -1; max-width: 354px; justify-self: center; width: 100%; }
+    .card-delay-2 {
+      animation-delay: 0.65s;
+      grid-column: 1 / -1;
+      max-width: 354px;
+      justify-self: center;
+      width: 100%;
+    }
+    .card-delay-3 {
+      animation-delay: 0.80s;
+      grid-column: 1 / -1;
+      max-width: 354px;
+      justify-self: center;
+      width: 100%;
+    }
 
     .service-card:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: var(--shadow-lg), var(--shadow-glow);
-      border-color: var(--border-hov);
-      background: var(--bg-card-hov);
+      box-shadow: var(--neu-inset);
+      transform: scale(1.01);
     }
-    .service-card:active {
-      transform: translateY(-3px) scale(1.01);
-    }
+    .card-delay-0:hover { background: linear-gradient(315deg, #eceffe, #f5f7ff); }
+    .card-delay-1:hover { background: linear-gradient(315deg, #eaf6fe, #f3fbff); }
+    .card-delay-2:hover { background: linear-gradient(315deg, #eafaf5, #f2fdf9); }
+    .card-delay-3:hover { background: linear-gradient(315deg, #fdf5e8, #fffbf2); }
+
+    html.dark .card-delay-0:hover { background: linear-gradient(315deg, #0e1730, #111e38); }
+    html.dark .card-delay-1:hover { background: linear-gradient(315deg, #0b1828, #0e1e32); }
+    html.dark .card-delay-2:hover { background: linear-gradient(315deg, #0a1820, #0d1e28); }
+    html.dark .card-delay-3:hover { background: linear-gradient(315deg, #18140a, #1e1a0e); }
+
+    .service-card:active { transform: scale(0.99); }
 
     @keyframes cardEnter {
       from { opacity: 0; transform: translateY(30px) scale(0.97); }
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
+    /* glow overlay – kept for smooth color accent on hover */
     .card-glow {
       position: absolute;
       inset: 0;
       opacity: 0;
-      transition: opacity 0.4s ease;
+      transition: opacity 1s ease;
       border-radius: inherit;
       pointer-events: none;
     }
     .salary-gradient.card-glow {
-      background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08));
+      background: linear-gradient(135deg, rgba(99,102,241,0.10), rgba(139,92,246,0.06));
     }
     .gas-gradient.card-glow {
-      background: linear-gradient(135deg, rgba(14,165,233,0.12), rgba(6,182,212,0.08));
+      background: linear-gradient(135deg, rgba(14,165,233,0.10), rgba(6,182,212,0.06));
     }
     .tax-gradient.card-glow {
-      background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.08));
+      background: linear-gradient(135deg, rgba(16,185,129,0.10), rgba(5,150,105,0.06));
     }
     .ot-gradient.card-glow {
-      background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.08));
+      background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(217,119,6,0.06));
     }
     .service-card:hover .card-glow { opacity: 1; }
 
-    /* ── Compact card inner ── */
+    /* ── Card inner ── */
     .card-inner {
       position: relative;
-      padding: 16px 18px;
+      padding: 24px 22px 20px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      align-items: flex-start;
+      gap: 14px;
       z-index: 1;
     }
 
-    /* ── Smaller icon ── */
+    /* ── Icon – neumorphic raised circle ── */
     .card-icon-wrap {
-      width: 44px; height: 44px;
-      border-radius: var(--radius-icon);
+      width: 56px; height: 56px;
+      border-radius: 16px;
       display: flex; align-items: center; justify-content: center;
       color: #fff;
       flex-shrink: 0;
-      transition: transform var(--transition);
+      transition: transform 1s ease, box-shadow 1s ease;
     }
     .salary-gradient.card-icon-wrap {
       background: linear-gradient(135deg, var(--salary-a), var(--salary-b));
-      box-shadow: 0 6px 18px rgba(99,102,241,0.38);
+      box-shadow: -6px -6px 14px rgba(99,102,241,0.25), 6px 6px 14px rgba(99,102,241,0.45);
     }
     .gas-gradient.card-icon-wrap {
       background: linear-gradient(135deg, var(--gas-a), var(--gas-b));
-      box-shadow: 0 6px 18px rgba(14,165,233,0.38);
+      box-shadow: -6px -6px 14px rgba(14,165,233,0.25), 6px 6px 14px rgba(14,165,233,0.45);
     }
     .tax-gradient.card-icon-wrap {
       background: linear-gradient(135deg, var(--tax-a), var(--tax-b));
-      box-shadow: 0 6px 18px rgba(16,185,129,0.38);
+      box-shadow: -6px -6px 14px rgba(16,185,129,0.25), 6px 6px 14px rgba(16,185,129,0.45);
     }
     .ot-gradient.card-icon-wrap {
       background: linear-gradient(135deg, var(--ot-a), var(--ot-b));
-      box-shadow: 0 6px 18px rgba(245,158,11,0.38);
+      box-shadow: -6px -6px 14px rgba(245,158,11,0.25), 6px 6px 14px rgba(245,158,11,0.45);
     }
-    .card-icon-wrap svg { width: 20px; height: 20px; }
-    .service-card:hover .card-icon-wrap { transform: scale(1.10) rotate(-3deg); }
+    .card-icon-wrap svg { width: 26px; height: 26px; }
 
-    .card-body { display: flex; flex-direction: column; gap: 3px; }
+    /* icon presses in on hover */
+    .service-card:hover .salary-gradient.card-icon-wrap {
+      transform: scale(1.06);
+      box-shadow: inset -4px -4px 10px rgba(99,102,241,0.25), inset 4px 4px 10px rgba(99,102,241,0.50);
+    }
+    .service-card:hover .gas-gradient.card-icon-wrap {
+      transform: scale(1.06);
+      box-shadow: inset -4px -4px 10px rgba(14,165,233,0.25), inset 4px 4px 10px rgba(14,165,233,0.50);
+    }
+    .service-card:hover .tax-gradient.card-icon-wrap {
+      transform: scale(1.06);
+      box-shadow: inset -4px -4px 10px rgba(16,185,129,0.25), inset 4px 4px 10px rgba(16,185,129,0.50);
+    }
+    .service-card:hover .ot-gradient.card-icon-wrap {
+      transform: scale(1.06);
+      box-shadow: inset -4px -4px 10px rgba(245,158,11,0.25), inset 4px 4px 10px rgba(245,158,11,0.50);
+    }
+
+    .card-body { display: flex; flex-direction: column; gap: 4px; }
 
     .card-badge {
       display: inline-block;
-      font-size: 0.60rem;
+      font-size: 0.62rem;
       font-weight: 600;
-      padding: 2px 7px;
+      padding: 3px 10px;
       border-radius: 100px;
       width: fit-content;
     }
@@ -414,29 +467,34 @@
       letter-spacing: -0.2px;
     }
     .card-subtitle {
-      font-size: 0.68rem;
+      font-size: 0.70rem;
       color: var(--fg-soft);
       line-height: 1.5;
     }
 
+    /* ── Arrow button – neumorphic pill ── */
     .card-arrow {
-      width: 28px; height: 28px;
+      width: 36px; height: 36px;
       border-radius: 50%;
-      border: 1px solid var(--border);
+      border: none;
+      background: var(--neu-bg);
+      box-shadow: var(--neu-btn);
       display: flex; align-items: center; justify-content: center;
       color: var(--fg-soft);
       margin-top: 2px;
-      transition: transform var(--transition), background var(--ease), border-color var(--ease), color var(--ease);
+      transition: box-shadow 1s ease, background 1s ease, color 0.3s ease, transform 1s ease;
     }
-    .card-arrow svg { width: 13px; height: 13px; }
+    .card-arrow svg { width: 14px; height: 14px; }
+
+    /* arrow presses in + fills with brand color on hover */
     .service-card:hover .card-arrow {
-      transform: translateX(-6px);
-      border-color: transparent;
+      box-shadow: var(--neu-btn-in);
+      transform: translateX(-4px);
     }
-    .card-delay-0:hover .card-arrow { background: var(--salary-a); color: #fff; }
-    .card-delay-1:hover .card-arrow { background: var(--gas-a); color: #fff; }
-    .card-delay-2:hover .card-arrow { background: var(--tax-a); color: #fff; }
-    .card-delay-3:hover .card-arrow { background: var(--ot-a); color: #fff; }
+    .card-delay-0:hover .card-arrow { background: var(--salary-a); color: #fff; box-shadow: inset -4px -4px 8px rgba(99,102,241,0.4), inset 4px 4px 8px rgba(139,92,246,0.4); }
+    .card-delay-1:hover .card-arrow { background: var(--gas-a);    color: #fff; box-shadow: inset -4px -4px 8px rgba(14,165,233,0.4), inset 4px 4px 8px rgba(6,182,212,0.4); }
+    .card-delay-2:hover .card-arrow { background: var(--tax-a);    color: #fff; box-shadow: inset -4px -4px 8px rgba(16,185,129,0.4), inset 4px 4px 8px rgba(5,150,105,0.4); }
+    .card-delay-3:hover .card-arrow { background: var(--ot-a);     color: #fff; box-shadow: inset -4px -4px 8px rgba(245,158,11,0.4),  inset 4px 4px 8px rgba(217,119,6,0.4); }
 
     /* ─── Info strip ─────────────────────────────────── */
     .info-strip {
@@ -498,7 +556,7 @@
     }
     .footer-dev strong { color: var(--fg-soft); font-weight: 700; }
 
-    /* ─── Animations ─────────────────────────────────���─ */
+    /* ─── Animations ──────────────────────────────────── */
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -513,16 +571,16 @@
       .logo-sub    { font-size: 0.66rem; }
       .hero-section { gap: 10px; }
       .hero-desc { font-size: 0.88rem; }
-      .cards-section { grid-template-columns: 1fr; gap: 10px; max-width: 380px; }
+      .cards-section { grid-template-columns: 1fr; gap: 14px; max-width: 380px; }
       .card-delay-2 { grid-column: auto; max-width: 100%; }
       .card-delay-3 { grid-column: auto; max-width: 100%; }
-      .card-inner { padding: 14px 16px; gap: 8px; }
-      .card-icon-wrap { width: 38px; height: 38px; border-radius: 11px; }
-      .card-icon-wrap svg { width: 17px; height: 17px; }
+      .card-inner { padding: 18px 18px 16px; gap: 12px; }
+      .card-icon-wrap { width: 48px; height: 48px; border-radius: 13px; }
+      .card-icon-wrap svg { width: 22px; height: 22px; }
       .card-title   { font-size: 0.98rem; }
-      .card-subtitle { font-size: 0.64rem; }
-      .card-arrow   { width: 24px; height: 24px; }
-      .card-arrow svg { width: 11px; height: 11px; }
+      .card-subtitle { font-size: 0.66rem; }
+      .card-arrow   { width: 32px; height: 32px; }
+      .card-arrow svg { width: 12px; height: 12px; }
       .info-strip { flex-direction: column; border-radius: 18px; padding: 12px 18px; gap: 8px; }
       .info-sep { width: 80px; height: 1px; }
       .footer-inner { justify-content: center; text-align: center; }
@@ -532,8 +590,8 @@
       .info-strip { width: 100%; }
     }
     @media (min-width: 641px) and (max-width: 900px) {
-      .cards-section { gap: 10px; }
-      .card-inner { padding: 16px 16px; }
+      .cards-section { gap: 12px; }
+      .card-inner { padding: 20px 18px 18px; }
     }
 
     /* ─── Search ─────────────────────────────────────── */
@@ -559,22 +617,19 @@
       font-size: 0.88rem;
       font-weight: 500;
       color: var(--fg);
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      background: var(--neu-bg);
+      border: none;
       border-radius: 100px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--neu-shadow);
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      transition: box-shadow 0.4s ease, background 0.4s ease;
       direction: rtl;
       appearance: none;
     }
     .search-input::placeholder { color: var(--fg-muted); font-weight: 400; }
     .search-input:focus {
-      border-color: var(--salary-a);
-      box-shadow: var(--shadow-sm), 0 0 0 3px rgba(99,102,241,0.13);
-      background: var(--bg-card-hov);
+      box-shadow: var(--neu-inset), 0 0 0 3px rgba(99,102,241,0.13);
+      background: var(--neu-bg);
     }
     .search-input:focus ~ .search-icon { color: var(--salary-a); }
     .search-clear {
@@ -928,4 +983,3 @@
 
 </body>
 </html>
-
