@@ -15,20 +15,20 @@
     :root {
       --font: 'Cairo', 'Tajawal', system-ui, sans-serif;
 
-      /* ── Neumorphic palette (light) ── */
-      --bg:           #e0e5ec;
-      --bg-card:      #e0e5ec;
-      --fg:           #1e293b;
-      --fg-soft:      #475569;
-      --fg-muted:     #94a3b8;
+      /* ── Neumorphic palette (dark) ── */
+      --bg:           #1a1f2e;
+      --bg-card:      #1e2535;
+      --fg:           #f1f5f9;
+      --fg-soft:      #94a3b8;
+      --fg-muted:     #475569;
 
-      /* ── Neumorphic shadows (light) ── */
-      --neo-card:     20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
-      --neo-card-hov: 24px 24px 70px #b4bec9, -24px -24px 70px #ffffff;
-      --neo-card-act: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
-      --neo-sm:       6px 6px 12px #bebebe, -6px -6px 12px #ffffff;
-      --neo-sm-in:    inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
-      --neo-xs:       4px 4px 8px #bebebe, -4px -4px 8px #ffffff;
+      /* ── Neumorphic shadows (dark) ── */
+      --neo-card:     20px 20px 60px #141926, -20px -20px 60px #283047;
+      --neo-card-hov: 24px 24px 70px #111623, -24px -24px 70px #2a344e;
+      --neo-card-act: inset 6px 6px 12px #141926, inset -6px -6px 12px #283047;
+      --neo-sm:       6px 6px 12px #141926, -6px -6px 12px #283047;
+      --neo-sm-in:    inset 4px 4px 8px #141926, inset -4px -4px 8px #283047;
+      --neo-xs:       4px 4px 8px #141926, -4px -4px 8px #283047;
 
       /* ── Accent gradients ── */
       --salary-a:  #6366f1;
@@ -47,22 +47,6 @@
       --ease:        0.25s ease;
     }
 
-    /* ── Dark mode ── */
-    html.dark {
-      --bg:           #1a1f2e;
-      --bg-card:      #1e2535;
-      --fg:           #f1f5f9;
-      --fg-soft:      #94a3b8;
-      --fg-muted:     #475569;
-
-      --neo-card:     20px 20px 60px #141926, -20px -20px 60px #283047;
-      --neo-card-hov: 24px 24px 70px #111623, -24px -24px 70px #2a344e;
-      --neo-card-act: inset 6px 6px 12px #141926, inset -6px -6px 12px #283047;
-      --neo-sm:       6px 6px 12px #141926, -6px -6px 12px #283047;
-      --neo-sm-in:    inset 4px 4px 8px #141926, inset -4px -4px 8px #283047;
-      --neo-xs:       4px 4px 8px #141926, -4px -4px 8px #283047;
-    }
-
     html {
       font-family: var(--font);
       direction: rtl;
@@ -75,7 +59,6 @@
       color: var(--fg);
       min-height: 100dvh;
       overflow-x: hidden;
-      transition: background-color 0.4s ease, color 0.4s ease;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -101,11 +84,8 @@
       z-index: 100;
       height: var(--header-h);
       background: var(--bg);
-      box-shadow: 0 4px 14px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05);
-      transition: background 0.4s ease, box-shadow 0.4s ease;
-    }
-    html.dark .site-header {
       box-shadow: 0 4px 14px rgba(0,0,0,0.40), 0 1px 4px rgba(0,0,0,0.25);
+      transition: background 0.4s ease, box-shadow 0.4s ease;
     }
     .header-inner {
       max-width: 960px;
@@ -144,32 +124,6 @@
       font-size: 0.72rem;
       color: var(--fg-soft);
       line-height: 1.2;
-    }
-
-    /* زر الوضع الليلي — Neumorphic دائري */
-    .dark-toggle {
-      width: 42px; height: 42px;
-      border-radius: 50%;
-      border: none;
-      background: var(--bg);
-      box-shadow: var(--neo-xs);
-      color: var(--fg);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      transition: box-shadow var(--ease), transform var(--ease);
-      flex-shrink: 0;
-      outline: none;
-    }
-    .dark-toggle svg { width: 18px; height: 18px; }
-    .dark-toggle:hover {
-      box-shadow: 6px 6px 14px #b4bec9, -6px -6px 14px #ffffff;
-    }
-    html.dark .dark-toggle:hover {
-      box-shadow: 6px 6px 14px #111623, -6px -6px 14px #2a344e;
-    }
-    .dark-toggle:active {
-      box-shadow: var(--neo-card-act);
-      transform: scale(0.96);
     }
 
     /* ─── Main ──────────────────────────────────────── */
@@ -365,9 +319,6 @@
     .card-arrow svg { width: 13px; height: 13px; }
     .service-card:hover .card-arrow {
       transform: translateX(-6px);
-      box-shadow: inset 3px 3px 6px #bebebe, inset -3px -3px 6px #ffffff;
-    }
-    html.dark .service-card:hover .card-arrow {
       box-shadow: inset 3px 3px 6px #141926, inset -3px -3px 6px #283047;
     }
     .card-delay-0:hover .card-arrow { color: var(--salary-a); }
@@ -409,10 +360,6 @@
     }
     .search-input::placeholder { color: var(--fg-muted); font-weight: 400; }
     .search-input:focus {
-      box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff,
-                  0 0 0 3px rgba(99,102,241,0.15);
-    }
-    html.dark .search-input:focus {
       box-shadow: inset 5px 5px 10px #141926, inset -5px -5px 10px #283047,
                   0 0 0 3px rgba(99,102,241,0.20);
     }
@@ -477,20 +424,15 @@
       flex-shrink: 0;
     }
     .info-icon svg { width: 10px; height: 10px; }
-    .info-sep { width: 1px; height: 18px; background: #c8d0db; flex-shrink: 0; }
-    html.dark .info-sep { background: #2e3a4e; }
+    .info-sep { width: 1px; height: 18px; background: #2e3a4e; flex-shrink: 0; }
 
     /* ─── Footer ─────────────────────────────────────── */
     .site-footer {
       position: relative;
       z-index: 1;
       background: var(--bg);
-      box-shadow: 0 -4px 14px rgba(0,0,0,0.06);
-      padding: 24px 20px;
-      transition: background 0.4s ease;
-    }
-    html.dark .site-footer {
       box-shadow: 0 -4px 14px rgba(0,0,0,0.35);
+      padding: 24px 20px;
     }
     .footer-inner {
       max-width: 960px;
@@ -580,18 +522,6 @@
           <span class="logo-sub">بوابة الخدمات الإلكترونية</span>
         </div>
       </div>
-      <button class="dark-toggle" id="darkToggle" aria-label="تبديل الوضع الداكن">
-        <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-        <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
-      </button>
     </div>
   </header>
 
@@ -777,27 +707,6 @@
 </div><!-- /.app-root -->
 
 <script>
-  /* ── Dark mode ─────────────────────────────── */
-  const html     = document.documentElement;
-  const toggle   = document.getElementById('darkToggle');
-  const iconMoon = document.getElementById('iconMoon');
-  const iconSun  = document.getElementById('iconSun');
-
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  let dark = localStorage.getItem('darkMode') === 'true' ||
-             (localStorage.getItem('darkMode') === null && prefersDark);
-
-  function applyDark(val) {
-    dark = val;
-    html.classList.toggle('dark', dark);
-    iconMoon.style.display = dark ? 'none' : '';
-    iconSun.style.display  = dark ? ''     : 'none';
-    localStorage.setItem('darkMode', String(dark));
-  }
-
-  applyDark(dark);
-  toggle.addEventListener('click', () => applyDark(!dark));
-
   /* ── Page load animation ───────────────────── */
   window.addEventListener('load', () => {
     setTimeout(() => document.getElementById('appRoot').classList.add('app-loaded'), 80);
@@ -818,7 +727,7 @@
         width:${size}px; height:${size}px;
         left:${e.clientX - rect.left - size/2}px;
         top:${e.clientY - rect.top  - size/2}px;
-        background:rgba(255,255,255,0.18);
+        background:rgba(255,255,255,0.08);
         transform:scale(0); animation:rippleAnim 0.55s ease-out forwards;
         z-index:10;
       `;
